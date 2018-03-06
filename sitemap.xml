@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://zhangming1994/zhangming1994.github.io/about/index.html</loc>
+    
+    <lastmod>2018-03-06T13:13:11.916Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://zhangming1994/zhangming1994.github.io/tags/index.html</loc>
     
     <lastmod>2018-03-06T12:50:26.506Z</lastmod>
@@ -12,13 +19,6 @@
     <loc>https://zhangming1994/zhangming1994.github.io/2018/03/06/hello-world/</loc>
     
     <lastmod>2018-03-06T12:40:20.470Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://zhangming1994/zhangming1994.github.io/about/index.html</loc>
-    
-    <lastmod>2018-03-06T11:06:06.733Z</lastmod>
     
   </url>
   
