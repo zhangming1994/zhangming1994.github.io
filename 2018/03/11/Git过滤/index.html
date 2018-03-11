@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Git过滤 | 我的自留地</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#000000">
+    
+    
+    <meta name="keywords" content="Git">
+    <meta name="description" content="git 创建 .gitignore 文件 建立项目过滤规则创建 .gitignore 随意设置想跟踪哪些文件 和不跟踪哪些文件.  1.在项目根目录下建立 .gitignore 文件  .gitignore文件过滤有两种模式，开放模式和保守模式2.1开放模式负责设置过滤哪些文件和文件夹  eg： 过滤文件夹设置： /mtk/过滤文件设置 指定过滤某种类型的文件： .zip .rar.via .tm">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git过滤">
+<meta property="og:url" content="https://zhangming1994/zhangming1994.github.io/2018/03/11/Git过滤/index.html">
+<meta property="og:site_name" content="我的自留地">
+<meta property="og:description" content="git 创建 .gitignore 文件 建立项目过滤规则创建 .gitignore 随意设置想跟踪哪些文件 和不跟踪哪些文件.  1.在项目根目录下建立 .gitignore 文件  .gitignore文件过滤有两种模式，开放模式和保守模式2.1开放模式负责设置过滤哪些文件和文件夹  eg： 过滤文件夹设置： /mtk/过滤文件设置 指定过滤某种类型的文件： .zip .rar.via .tm">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-03-11T08:07:02.707Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git过滤">
+<meta name="twitter:description" content="git 创建 .gitignore 文件 建立项目过滤规则创建 .gitignore 随意设置想跟踪哪些文件 和不跟踪哪些文件.  1.在项目根目录下建立 .gitignore 文件  .gitignore文件过滤有两种模式，开放模式和保守模式2.1开放模式负责设置过滤哪些文件和文件夹  eg： 过滤文件夹设置： /mtk/过滤文件设置 指定过滤某种类型的文件： .zip .rar.via .tm">
+    
+        <link rel="alternate" type="application/atom+xml" title="我的自留地" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.png">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">枫居住的街道</h5>
+          <a href="mailto:zhangyumingtfr@163.com" title="zhangyumingtfr@163.com" class="mail">zhangyumingtfr@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/work"  >
+                <i class="icon icon-lg icon-hand-peace-o"></i>
+                作品
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-user"></i>
+                关于我
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/zhangming1994" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                测试
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Git过滤</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Git过滤</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-03-11T08:06:46.000Z" itemprop="datePublished" class="page-time">
+  2018-03-11
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#folder"><span class="post-toc-number">1.</span> <span class="post-toc-text">folder</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#fixed-file"><span class="post-toc-number">2.</span> <span class="post-toc-text">fixed file</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#temp-file"><span class="post-toc-number">3.</span> <span class="post-toc-text">temp file</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#script"><span class="post-toc-number">4.</span> <span class="post-toc-text">script</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#此为注释-–-将被-Git-忽略"><span class="post-toc-number">5.</span> <span class="post-toc-text">此为注释 – 将被 Git 忽略</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Git过滤"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Git过滤</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-03-11 16:06:46" datetime="2018-03-11T08:06:46.000Z"  itemprop="datePublished">2018-03-11</time>
+
+            
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>git 创建 .gitignore 文件 建立项目过滤规则<br>创建 .gitignore 随意设置想跟踪哪些文件 和不跟踪哪些文件. </p>
+<p>1.在项目根目录下建立 .gitignore 文件</p>
+<ol>
+<li>.gitignore文件过滤有两种模式，开放模式和保守模式<br>2.1开放模式负责设置过滤哪些文件和文件夹</li>
+</ol>
+<p>eg：</p>
+<p>过滤文件夹设置：</p>
+<p>/mtk/<br>过滤文件设置</p>
+<p>指定过滤某种类型的文件：</p>
+<p><em>.zip
+</em>.rar<br><em>.via
+</em>.tmp<br>*.err<br>指定过滤某个文件：</p>
+<p>/mtk/do.c</p>
+<p>/mtk/if.h<br>2.2 b保守模式负责设置哪些文件不被过滤，也就是哪些文件要被跟踪。</p>
+<p>跟踪某个文件夹</p>
+<p>!/plutommi/mmi<br>跟踪某类文件</p>
+<p>!*.c</p>
+<p>!*.h<br>跟踪某个指定文件</p>
+<p>!/plutommi/mmi/mmi_features.h<br>3.配置.gitignore 的简易原则</p>
+<p>采用共享模式与保守模式结合配置的办法。eg：一个文件夹下有很多文件夹和文件，而我只想跟踪其中的一个文件，这样设置就可以满足这种情况，先用共 享模式把整个目录 都设置为不跟踪，然后再用保守模式把这个文件夹中想要跟踪的文件设置为被跟踪，配置很简单，就可以跟踪想要跟踪的文件。</p>
+<p>4.我做mtk项目用到的 .gitignore 文件的具体配置如下：</p>
+<p>#######开放模式############</p>
+<p>###############</p>
+<h1 id="folder"><a href="#folder" class="headerlink" title="folder"></a>folder</h1><p>###############<br>/<em>souceInsight</em>/<br>/build/<br>/MoDIS/<br>/Doc/<br>/mtk_lib/<br>/scripts/<br>/header_temp/<br>/tools/AudioResGen/<br>/tools/GLBOptionSwtichRef/<br>/tools/GMSL/<br>/tools/MinGW/<br>/tools/MSYS/<br>/tools/NewMMIResourceTool/<br>/tools/NVRAMStatistic/<br>/tst/<br>/verno/<br>/plutommi/tool/<br>/plutommi/Customer/ResGenerator/<br>/plutommi/Customer/CustResource/<br>/plutommi/Customer/LcdResource/<br>/plutommi/Customer/Images/<br>/plutommi/mmi/Framework/EventHandling/EventsInc/mmi_menu_handlers.h<br>/vendor/font/MTK/official/project/plutommi/content/inc/<br>/vendor/font/MTK/official/project/plutommi/content/src/</p>
+<p>###############</p>
+<h1 id="fixed-file"><a href="#fixed-file" class="headerlink" title="fixed file"></a>fixed file</h1><p>###############<br>.gitignore<br><em>.exe
+</em>.txt<br><em>.def
+</em>.dsp<br><em>.lib
+</em>.doc<br><em>.dll
+</em>.lnt<br><em>.pm
+</em>.xls<br><em>.dbg
+</em>.DBG<br><em>.o
+</em>.plg<br>*.keep</p>
+<p>###############</p>
+<h1 id="temp-file"><a href="#temp-file" class="headerlink" title="temp file"></a>temp file</h1><p>###############<br>~<em>
+</em>.log<br><em>.cmm
+</em>.men<br><em>.ini
+</em>.fig<br><em>.cmp
+</em>.tmp</p>
+<p>###############</p>
+<h1 id="script"><a href="#script" class="headerlink" title="script"></a>script</h1><p>###############<br>*.bat</p>
+<p>#########保守模式############<br>!/plutommi/Customer/CustResource/PLUTO_MMI/<br>!/plutommi/Customer/LcdResource/MainLcd128X160/<br>!/plutommi/Customer/Images/PLUTO128X160/image.zip<br>!/vendor/font/MTK/official/project/plutommi/content/inc/MainLcd128X160/<br>!/vendor/font/MTK/official/project/plutommi/content/src/MainLcd128X160/</p>
+<p>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+<p>   在git中如果想忽略掉某个文件，不让这个文件提交到版本库中，可以使用修改 .gitignore 文件的方法。这个文件每一行保存了一个匹配的规则例如：</p>
+<h1 id="此为注释-–-将被-Git-忽略"><a href="#此为注释-–-将被-Git-忽略" class="headerlink" title="此为注释 – 将被 Git 忽略"></a>此为注释 – 将被 Git 忽略</h1><pre><code>        *.a       # 忽略所有 .a 结尾的文件
+
+        !lib.a    # 但 lib.a 除外
+
+        /TODO     # 仅仅忽略项目根目录下的 TODO 文件，不包括 subdir/TODO
+
+        build/    # 忽略 build/ 目录下的所有文件
+        doc/*.txt # 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt
+
+这样设置了以后 所有的 .pyc 文件都不会添加到版本库中去。
+
+另外 git 提供了一个全局的 .gitignore，你可以在你的用户目录下创建 ~/.gitignoreglobal 文件，以同样的规则来划定哪些文件是不需要版本控制的。
+</code></pre><p>需要执行 git config –global core.excludesfile ~/.gitignoreglobal来使得它生效。</p>
+<p>其他的一些过滤条件</p>
+<pre><code>* ？：代表任意的一个字符
+
+* ＊：代表任意数目的字符
+
+* {!ab}：必须不是此类型
+
+* {ab,bb,cx}：代表ab,bb,cx中任一类型即可
+
+* [abc]：代表a,b,c中任一字符即可
+* [ ^abc]：代表必须不是a,b,c中任一字符
+
+由于git不会加入空目录，所以下面做法会导致tmp不会存在 tmp/*             //忽略tmp文件夹所有文件
+
+
+
+改下方法，在tmp下也加一个.gitignore,内容为
+
+                    *
+
+                    !.gitignore
+
+还有一种情况，就是已经commit了，再加入gitignore是无效的，所以需要删除下缓存
+
+                    git rm -r --cached ignore_file
+</code></pre><p>注意： .gitignore只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的。</p>
+<pre><code>正确的做法是在每个clone下来的仓库中手动设置不要检查特定文件的更改情况。
+
+git update-index --assume-unchanged PATH    在PATH处输入要忽略的文件。
+
+
+
+另外 git 还提供了另一种 exclude 的方式来做同样的事情，不同的是 .gitignore 
+</code></pre><p>这个文件本身会提交到版本库中去。用来保存的是公共的需要排除的文件。而 .git/info/exclude<br>这里设置的则是你自己本地需要排除的文件。 他不会影响到其他人。也不会提交到版本库中去。</p>
+<pre><code>.gitignore 还有个有意思的小功能， 一个空的 .gitignore 文件 可以当作是一个 placeholder 
+</code></pre><p>。当你需要为项目创建一个空的 log 目录时， 这就变的很有用。 你可以创建一个 log 目录 在里面放置一个空的 .gitignore<br>文件。这样当你 clone 这个 repo 的时候 git 会自动的创建好一个空的 log 目录了。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-03-11T08:07:02.707Z" itemprop="dateUpdated">2018-03-11 16:07:02</time>
+</span><br>
+
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2018/03/11/Git过滤/" target="_blank" rel="external">https://zhangming1994/zhangming1994.github.io/2018/03/11/Git过滤/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://zhangming1994/zhangming1994.github.io">
+            <img src="/img/avatar.jpg" alt="枫居住的街道">
+            枫居住的街道
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+
+            
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/03/06/hello-world/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Hello World</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>枫居住的街道 &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: false, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
