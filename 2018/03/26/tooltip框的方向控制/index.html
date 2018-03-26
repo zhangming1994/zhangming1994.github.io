@@ -13,25 +13,25 @@
     
     
     
-    <title>centos修改root密码 | 我的自留地</title>
+    <title>tooltip方向控制 | 我的自留地</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#000000">
     
     
-    <meta name="keywords" content="Linux,CentOS">
-    <meta name="description" content="进去的时候按e，然后找到 LANG=zh_CN.UTF8，在后面加上init=/bin/sh,然后按ctrl+x然后将挂载文件系统修改为可写模式:mount -o remount,rw/然后执行passwd，修改密码,如果之前系统用了selinux,先执行touch /.autorelabel否则无法正常启动系统,然后exec /sbin/init或者 exec /sbin/reboot重启">
-<meta name="keywords" content="Linux,CentOS">
+    <meta name="keywords" content="css">
+    <meta name="description" content="问题今天，在写tooltip的时候总结了一些tooltip的小箭头方向控制，中间或使用到css伪元素::after和content属性来创建一个小箭头标志，在这中间top用于定位箭头，border-width属性指定箭头的大小，border-color用于将内容转换为箭头。 右侧提示框/左侧箭头dd::after{     content:&amp;quot;&amp;quot;;     position:ab">
+<meta name="keywords" content="css">
 <meta property="og:type" content="article">
-<meta property="og:title" content="centos修改root密码">
-<meta property="og:url" content="https://zhangming1994/zhangming1994.github.io/2018/03/12/centos修改root密码/index.html">
+<meta property="og:title" content="tooltip方向控制">
+<meta property="og:url" content="https://zhangming1994/zhangming1994.github.io/2018/03/26/tooltip框的方向控制/index.html">
 <meta property="og:site_name" content="我的自留地">
-<meta property="og:description" content="进去的时候按e，然后找到 LANG=zh_CN.UTF8，在后面加上init=/bin/sh,然后按ctrl+x然后将挂载文件系统修改为可写模式:mount -o remount,rw/然后执行passwd，修改密码,如果之前系统用了selinux,先执行touch /.autorelabel否则无法正常启动系统,然后exec /sbin/init或者 exec /sbin/reboot重启">
+<meta property="og:description" content="问题今天，在写tooltip的时候总结了一些tooltip的小箭头方向控制，中间或使用到css伪元素::after和content属性来创建一个小箭头标志，在这中间top用于定位箭头，border-width属性指定箭头的大小，border-color用于将内容转换为箭头。 右侧提示框/左侧箭头dd::after{     content:&amp;quot;&amp;quot;;     position:ab">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-12T09:02:01.922Z">
+<meta property="og:updated_time" content="2018-03-26T09:20:48.940Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="centos修改root密码">
-<meta name="twitter:description" content="进去的时候按e，然后找到 LANG=zh_CN.UTF8，在后面加上init=/bin/sh,然后按ctrl+x然后将挂载文件系统修改为可写模式:mount -o remount,rw/然后执行passwd，修改密码,如果之前系统用了selinux,先执行touch /.autorelabel否则无法正常启动系统,然后exec /sbin/init或者 exec /sbin/reboot重启">
+<meta name="twitter:title" content="tooltip方向控制">
+<meta name="twitter:description" content="问题今天，在写tooltip的时候总结了一些tooltip的小箭头方向控制，中间或使用到css伪元素::after和content属性来创建一个小箭头标志，在这中间top用于定位箭头，border-width属性指定箭头的大小，border-color用于将内容转换为箭头。 右侧提示框/左侧箭头dd::after{     content:&amp;quot;&amp;quot;;     position:ab">
     
         <link rel="alternate" type="application/atom+xml" title="我的自留地" href="/atom.xml">
     
@@ -119,7 +119,7 @@
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
         </a>
-        <div class="flex-col header-title ellipsis">centos修改root密码</div>
+        <div class="flex-col header-title ellipsis">tooltip方向控制</div>
         
         <div class="search-wrap" id="search-wrap">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
@@ -137,11 +137,11 @@
 <header class="content-header post-header">
 
     <div class="container fade-scale">
-        <h1 class="title">centos修改root密码</h1>
+        <h1 class="title">tooltip方向控制</h1>
         <h5 class="subtitle">
             
-                <time datetime="2018-03-12T08:57:57.892Z" itemprop="datePublished" class="page-time">
-  2018-03-12
+                <time datetime="2018-03-26T09:00:50.058Z" itemprop="datePublished" class="page-time">
+  2018-03-26
 </time>
 
 
@@ -157,14 +157,21 @@
 
 <div class="container body-wrap">
     
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#问题"><span class="post-toc-number">1.</span> <span class="post-toc-text">问题</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#右侧提示框-左侧箭头"><span class="post-toc-number">2.</span> <span class="post-toc-text">右侧提示框/左侧箭头</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#左边提示框-右侧箭头"><span class="post-toc-number">3.</span> <span class="post-toc-text">左边提示框/右侧箭头</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#顶部提示框-底部箭头"><span class="post-toc-number">4.</span> <span class="post-toc-text">顶部提示框/底部箭头</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#底部提示框-顶部箭头"><span class="post-toc-number">5.</span> <span class="post-toc-text">底部提示框/顶部箭头</span></a></li></ol>
+        </nav>
+    </aside>
 
-<article id="post-centos修改root密码"
+
+<article id="post-tooltip框的方向控制"
   class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
-        <h1 class="post-card-title">centos修改root密码</h1>
+        <h1 class="post-card-title">tooltip方向控制</h1>
         <div class="post-meta">
-            <time class="post-time" title="2018-03-12 16:57:57" datetime="2018-03-12T08:57:57.892Z"  itemprop="datePublished">2018-03-12</time>
+            <time class="post-time" title="2018-03-26 17:00:50" datetime="2018-03-26T09:00:50.058Z"  itemprop="datePublished">2018-03-26</time>
 
             
 
@@ -173,8 +180,48 @@
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <p>进去的时候按e，然后找到 LANG=zh_CN.UTF8，在后面加上init=/bin/sh,然后按ctrl+x<br>然后将挂载文件系统修改为可写模式:mount -o remount,rw/<br>然后执行passwd，修改密码,如果之前系统用了selinux,先执行touch /.autorelabel否则无法正常启动系统,然后exec /sbin/init或者 exec /sbin/reboot重启</p>
-
+            <h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>今天，在写tooltip的时候总结了一些tooltip的小箭头方向控制，中间或使用到css伪元素::after和content属性来创建一个小箭头标志，在这中间top用于定位箭头，border-width属性指定箭头的大小，border-color用于将内容转换为箭头。</p>
+<h3 id="右侧提示框-左侧箭头"><a href="#右侧提示框-左侧箭头" class="headerlink" title="右侧提示框/左侧箭头"></a>右侧提示框/左侧箭头</h3><pre><code>dd::after{
+    content:&quot;&quot;;
+    position:absolute;
+    top:50%;
+    right:100%;
+    margin-top:-5px;
+    border-width:5px;
+    border-style:solid;//边框样式
+    border-color:transparent black transparent transparent;//这个箭头颜色设置遵循下，左，上，右的顺序
+}
+</code></pre><h3 id="左边提示框-右侧箭头"><a href="#左边提示框-右侧箭头" class="headerlink" title="左边提示框/右侧箭头"></a>左边提示框/右侧箭头</h3><pre><code>dd::after{
+    content:&quot;&quot;;
+    position:absolute;
+    top:50%;
+    left:100%;
+    margin-top:-5px;
+    border-width:5px;
+    border-style:solid;//边框样式
+    border-color:transparent transparent transparent black;//这个颜色设置遵循下，左，上，右的顺序
+}
+</code></pre><h3 id="顶部提示框-底部箭头"><a href="#顶部提示框-底部箭头" class="headerlink" title="顶部提示框/底部箭头"></a>顶部提示框/底部箭头</h3><pre><code>dd::after{
+    content:&quot;&quot;;
+    position:absolute;
+    top:100%;
+    left:50%;//用来居中
+    margin-left:-5px;
+    border-width:5px;
+    border-style:solid;//边框样式
+    border-color:black transparent transparent transparent;//这个颜色设置遵循下，左，上，右的顺序
+}
+</code></pre><h3 id="底部提示框-顶部箭头"><a href="#底部提示框-顶部箭头" class="headerlink" title="底部提示框/顶部箭头"></a>底部提示框/顶部箭头</h3><pre><code>dd::after{
+    content:&quot;&quot;;
+    position:absolute;
+    bottom:100%;
+    left:50%;//用来居中
+    margin-left:-5px;
+    border-width:5px;
+    border-style:solid;//边框样式
+    border-color:transparent transparent black transparent;//这个颜色设置遵循下，左，上，右的顺序
+}
+</code></pre>
         </div>
 
         <blockquote class="post-copyright">
@@ -182,12 +229,12 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-03-12T09:02:01.922Z" itemprop="dateUpdated">2018-03-12 17:02:01</time>
+    最后更新时间：<time datetime="2018-03-26T09:20:48.940Z" itemprop="dateUpdated">2018-03-26 17:20:48</time>
 </span><br>
 
 
         
-        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2018/03/12/centos修改root密码/" target="_blank" rel="external">https://zhangming1994/zhangming1994.github.io/2018/03/12/centos修改root密码/</a>
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2018/03/26/tooltip框的方向控制/" target="_blank" rel="external">https://zhangming1994/zhangming1994.github.io/2018/03/26/tooltip框的方向控制/</a>
         
     </div>
     
@@ -204,7 +251,7 @@
 
         <div class="post-footer">
             
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CentOS/">CentOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/css/">css</a></li></ul>
 
 
             
@@ -214,21 +261,14 @@
     </div>
 
     
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2018/03/26/tooltip框的方向控制/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">tooltip方向控制</h4>
-      </a>
-    </div>
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
   
 
   
     <div class="waves-block waves-effect next">
-      <a href="/2018/03/12/golang文件操作/" id="post-next" class="post-nav-link">
+      <a href="/2018/03/12/centos修改root密码/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">golang文件操作</h4>
+        <h4 class="title">centos修改root密码</h4>
       </a>
     </div>
   
