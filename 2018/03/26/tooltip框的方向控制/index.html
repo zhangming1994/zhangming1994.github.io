@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="我的自留地">
 <meta property="og:description" content="问题今天，在写tooltip的时候总结了一些tooltip的小箭头方向控制，中间或使用到css伪元素::after和content属性来创建一个小箭头标志，在这中间top用于定位箭头，border-width属性指定箭头的大小，border-color用于将内容转换为箭头。 右侧提示框/左侧箭头dd::after{     content:&amp;quot;&amp;quot;;     position:ab">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-26T09:20:48.940Z">
+<meta property="og:updated_time" content="2018-03-26T09:33:42.738Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="tooltip方向控制">
 <meta name="twitter:description" content="问题今天，在写tooltip的时候总结了一些tooltip的小箭头方向控制，中间或使用到css伪元素::after和content属性来创建一个小箭头标志，在这中间top用于定位箭头，border-width属性指定箭头的大小，border-color用于将内容转换为箭头。 右侧提示框/左侧箭头dd::after{     content:&amp;quot;&amp;quot;;     position:ab">
@@ -160,7 +160,7 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#问题"><span class="post-toc-number">1.</span> <span class="post-toc-text">问题</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#右侧提示框-左侧箭头"><span class="post-toc-number">2.</span> <span class="post-toc-text">右侧提示框/左侧箭头</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#左边提示框-右侧箭头"><span class="post-toc-number">3.</span> <span class="post-toc-text">左边提示框/右侧箭头</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#顶部提示框-底部箭头"><span class="post-toc-number">4.</span> <span class="post-toc-text">顶部提示框/底部箭头</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#底部提示框-顶部箭头"><span class="post-toc-number">5.</span> <span class="post-toc-text">底部提示框/顶部箭头</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#问题"><span class="post-toc-number">1.</span> <span class="post-toc-text">问题</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#右侧提示框-左侧箭头"><span class="post-toc-number">2.</span> <span class="post-toc-text">右侧提示框/左侧箭头</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#左边提示框-右侧箭头"><span class="post-toc-number">3.</span> <span class="post-toc-text">左边提示框/右侧箭头</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#顶部提示框-底部箭头"><span class="post-toc-number">4.</span> <span class="post-toc-text">顶部提示框/底部箭头</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#底部提示框-顶部箭头"><span class="post-toc-number">5.</span> <span class="post-toc-text">底部提示框/顶部箭头</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#发现"><span class="post-toc-number">6.</span> <span class="post-toc-text">发现</span></a></li></ol>
         </nav>
     </aside>
 
@@ -221,7 +221,17 @@
     border-style:solid;//边框样式
     border-color:transparent transparent black transparent;//这个颜色设置遵循下，左，上，右的顺序
 }
-</code></pre>
+</code></pre><h3 id="发现"><a href="#发现" class="headerlink" title="发现"></a>发现</h3><p>在写的最后加上了，淡入淡出效果，如下</p>
+<pre><code>dd:hover .tt{
+    visibility:visible;
+    opacity:1;
+}
+.tt{
+    opacity:0;
+    transition:opacity 1s;
+}
+</code></pre><p>但是，当我将visibility更换为display的时候这个淡入效果就失效了，查看了transition属性发现时他不支持display属性的改变，浏览器会将节点属性的变化和display一起显示，导致动画效果失效，解决方法下次有时间更新上来…</p>
+
         </div>
 
         <blockquote class="post-copyright">
@@ -229,7 +239,7 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-03-26T09:20:48.940Z" itemprop="dateUpdated">2018-03-26 17:20:48</time>
+    最后更新时间：<time datetime="2018-03-26T09:33:42.738Z" itemprop="dateUpdated">2018-03-26 17:33:42</time>
 </span><br>
 
 
