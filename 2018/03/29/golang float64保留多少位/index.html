@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>golang float64保留小数点后的位数 | 我的自留地</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#000000">
+    
+    
+    <meta name="keywords" content="Golang">
+    <meta name="description" content="第一种思路，利用利用fmt.Sprintf()func Round2(f float64, n int) float64 {       floatStr := fmt.Sprintf(&amp;quot;%.&amp;quot;+strconv.Itoa(n)+&amp;quot;f&amp;quot;, f)       inst, _ := strconv.ParseFloat(floatStr, 64)       re">
+<meta name="keywords" content="Golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="golang float64保留小数点后的位数">
+<meta property="og:url" content="https://zhangming1994/zhangming1994.github.io/2018/03/29/golang float64保留多少位/index.html">
+<meta property="og:site_name" content="我的自留地">
+<meta property="og:description" content="第一种思路，利用利用fmt.Sprintf()func Round2(f float64, n int) float64 {       floatStr := fmt.Sprintf(&amp;quot;%.&amp;quot;+strconv.Itoa(n)+&amp;quot;f&amp;quot;, f)       inst, _ := strconv.ParseFloat(floatStr, 64)       re">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-03-29T09:34:17.140Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="golang float64保留小数点后的位数">
+<meta name="twitter:description" content="第一种思路，利用利用fmt.Sprintf()func Round2(f float64, n int) float64 {       floatStr := fmt.Sprintf(&amp;quot;%.&amp;quot;+strconv.Itoa(n)+&amp;quot;f&amp;quot;, f)       inst, _ := strconv.ParseFloat(floatStr, 64)       re">
+    
+        <link rel="alternate" type="application/atom+xml" title="我的自留地" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.png">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">枫居住的街道</h5>
+          <a href="mailto:zhangyumingtfr@163.com" title="zhangyumingtfr@163.com" class="mail">zhangyumingtfr@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/work"  >
+                <i class="icon icon-lg icon-hand-peace-o"></i>
+                作品
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-user"></i>
+                关于我
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/zhangming1994" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                测试
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">golang float64保留小数点后的位数</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">golang float64保留小数点后的位数</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-03-29T09:21:34.955Z" itemprop="datePublished" class="page-time">
+  2018-03-29
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#第一种思路，利用利用fmt-Sprintf"><span class="post-toc-number">1.</span> <span class="post-toc-text">第一种思路，利用利用fmt.Sprintf()</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#第二种思路，利用math包"><span class="post-toc-number">2.</span> <span class="post-toc-text">第二种思路，利用math包</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-golang float64保留多少位"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">golang float64保留小数点后的位数</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-03-29 17:21:34" datetime="2018-03-29T09:21:34.955Z"  itemprop="datePublished">2018-03-29</time>
+
+            
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h3 id="第一种思路，利用利用fmt-Sprintf"><a href="#第一种思路，利用利用fmt-Sprintf" class="headerlink" title="第一种思路，利用利用fmt.Sprintf()"></a>第一种思路，利用利用fmt.Sprintf()</h3><pre><code>func Round2(f float64, n int) float64 {  
+    floatStr := fmt.Sprintf(&quot;%.&quot;+strconv.Itoa(n)+&quot;f&quot;, f)  
+    inst, _ := strconv.ParseFloat(floatStr, 64)  
+    return inst  
+} 
+</code></pre><p>这种一看就知道，补充一下各种字母代表的含义</p>
+<pre><code>浮点数和复数的组成部分（实部和虚部）
+占位符     说明                              举例            输出
+%b      无小数部分的，指数为二的幂的科学计数法，与 strconv.FormatFloat 的 &apos;b&apos; 转换格式一致。例如 -123456p-78
+%e      科学计数法，例如 -1234.456e+78        Printf(&quot;%e&quot;, 10.2)     1.020000e+01
+%E      科学计数法，例如 -1234.456E+78        Printf(&quot;%e&quot;, 10.2)     1.020000E+01
+%f      有小数点而无指数，例如 123.456        Printf(&quot;%f&quot;, 10.2)     10.200000
+%g      根据情况选择 %e 或 %f 以产生更紧凑的（无末尾的0）输出 Printf(&quot;%g&quot;, 10.20)   10.2
+%G      根据情况选择 %E 或 %f 以产生更紧凑的（无末尾的0）输出 Printf(&quot;%G&quot;, 10.20+2i) (10.2+2i)
+
+布尔占位符
+占位符       说明                举例                     输出
+%t          true 或 false。     Printf(&quot;%t&quot;, true)       true
+
+整数占位符
+占位符     说明                                  举例                       输出
+%b      二进制表示                             Printf(&quot;%b&quot;, 5)             101
+%c      相应Unicode码点所表示的字符              Printf(&quot;%c&quot;, 0x4E2D)        中
+%d      十进制表示                             Printf(&quot;%d&quot;, 0x12)          18
+%o      八进制表示                             Printf(&quot;%d&quot;, 10)            12
+%q      单引号围绕的字符字面值，由Go语法安全地转义 Printf(&quot;%q&quot;, 0x4E2D)        &apos;中&apos;
+%x      十六进制表示，字母形式为小写 a-f         Printf(&quot;%x&quot;, 13)             d
+%X      十六进制表示，字母形式为大写 A-F         Printf(&quot;%x&quot;, 13)             D
+%U      Unicode格式：U+1234，等同于 &quot;U+%04X&quot;   Printf(&quot;%U&quot;, 0x4E2D)         U+4E2D
+
+普通占位符
+占位符     说明                           举例                   输出
+%v      相应值的默认格式。            Printf(&quot;%v&quot;, people)   {zhangsan}，
+%+v     打印结构体时，会添加字段名     Printf(&quot;%+v&quot;, people)  {Name:zhangsan}
+%#v     相应值的Go语法表示            Printf(&quot;#v&quot;, people)   main.Human{Name:&quot;zhangsan&quot;}
+%T      相应值的类型的Go语法表示       Printf(&quot;%T&quot;, people)   main.Human
+%%      字面上的百分号，并非值的占位符  Printf(&quot;%%&quot;)            %
+
+字符串与字节切片
+占位符     说明                              举例                           输出
+%s      输出字符串表示（string类型或[]byte)   Printf(&quot;%s&quot;, []byte(&quot;Go语言&quot;))  Go语言
+%q      双引号围绕的字符串，由Go语法安全地转义  Printf(&quot;%q&quot;, &quot;Go语言&quot;)         &quot;Go语言&quot;
+%x      十六进制，小写字母，每字节两个字符      Printf(&quot;%x&quot;, &quot;golang&quot;)         676f6c616e67
+%X      十六进制，大写字母，每字节两个字符      Printf(&quot;%X&quot;, &quot;golang&quot;)         676F6C616E67
+</code></pre><h3 id="第二种思路，利用math包"><a href="#第二种思路，利用math包" class="headerlink" title="第二种思路，利用math包"></a>第二种思路，利用math包</h3><pre><code>func Round(f float64, n int) float64 {
+    pow10_n := math.Pow10(n)
+    return math.Trunc((f+0.5/pow10_n)*pow10_n) / pow10_n
+}
+</code></pre><p>这里详细了解一下Pow10()和math.Rrunc()</p>
+<pre><code>这是Pow10()源码
+func Pow10(n int) float64 {
+if 0 &lt;= n &amp;&amp; n &lt;= 308 {
+    return pow10postab32[uint(n)/32] * pow10tab[uint(n)%32]
+}
+
+if -323 &lt;= n &amp;&amp; n &lt;= 0 {
+    return pow10negtab32[uint(-n)/32] / pow10tab[uint(-n)%32]
+}
+
+// n &lt; -323 || 308 &lt; n
+if n &gt; 0 {
+    return Inf(1)
+}
+
+// n &lt; -323
+return 0
+}
+
+
+// pow10postab32 stores the pre-computed value for 10**(i*32) at index i.
+var pow10postab32 = [...]float64{
+    1e00, 1e32, 1e64, 1e96, 1e128, 1e160, 1e192, 1e224, 1e256, 1e288,
+}
+
+// pow10negtab32 stores the pre-computed value for 10**(-i*32) at index i.
+var pow10negtab32 = [...]float64{
+    1e-00, 1e-32, 1e-64, 1e-96, 1e-128, 1e-160, 1e-192, 1e-224, 1e-256, 1e-288, 1e-320,
+}
+
+
+这是Trunc()的定义:
+func Trunc(x float64) float64
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-03-29T09:34:17.140Z" itemprop="dateUpdated">2018-03-29 17:34:17</time>
+</span><br>
+
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2018/03/29/golang float64保留多少位/" target="_blank" rel="external">https://zhangming1994/zhangming1994.github.io/2018/03/29/golang float64保留多少位/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://zhangming1994/zhangming1994.github.io">
+            <img src="/img/avatar.jpg" alt="枫居住的街道">
+            枫居住的街道
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/">Golang</a></li></ul>
+
+
+            
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/03/26/tooltip框的方向控制/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">tooltip方向控制</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>枫居住的街道 &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: false, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
