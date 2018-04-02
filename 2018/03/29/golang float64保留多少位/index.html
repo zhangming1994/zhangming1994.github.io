@@ -20,18 +20,18 @@
     
     
     <meta name="keywords" content="Golang">
-    <meta name="description" content="第一种思路，利用利用fmt.Sprintf()func Round2(f float64, n int) float64 {       floatStr := fmt.Sprintf(&amp;quot;%.&amp;quot;+strconv.Itoa(n)+&amp;quot;f&amp;quot;, f)       inst, _ := strconv.ParseFloat(floatStr, 64)       re">
+    <meta name="description" content="第一种思路，利用利用fmt.Sprintf(),这种用到反射，效率不高func Round2(f float64, n int) float64 {       floatStr := fmt.Sprintf(&amp;quot;%.&amp;quot;+strconv.Itoa(n)+&amp;quot;f&amp;quot;, f)       inst, _ := strconv.ParseFloat(floatStr,">
 <meta name="keywords" content="Golang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="golang float64保留小数点后的位数">
 <meta property="og:url" content="https://zhangming1994/zhangming1994.github.io/2018/03/29/golang float64保留多少位/index.html">
 <meta property="og:site_name" content="我的自留地">
-<meta property="og:description" content="第一种思路，利用利用fmt.Sprintf()func Round2(f float64, n int) float64 {       floatStr := fmt.Sprintf(&amp;quot;%.&amp;quot;+strconv.Itoa(n)+&amp;quot;f&amp;quot;, f)       inst, _ := strconv.ParseFloat(floatStr, 64)       re">
+<meta property="og:description" content="第一种思路，利用利用fmt.Sprintf(),这种用到反射，效率不高func Round2(f float64, n int) float64 {       floatStr := fmt.Sprintf(&amp;quot;%.&amp;quot;+strconv.Itoa(n)+&amp;quot;f&amp;quot;, f)       inst, _ := strconv.ParseFloat(floatStr,">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-29T09:34:17.140Z">
+<meta property="og:updated_time" content="2018-03-30T01:50:50.582Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="golang float64保留小数点后的位数">
-<meta name="twitter:description" content="第一种思路，利用利用fmt.Sprintf()func Round2(f float64, n int) float64 {       floatStr := fmt.Sprintf(&amp;quot;%.&amp;quot;+strconv.Itoa(n)+&amp;quot;f&amp;quot;, f)       inst, _ := strconv.ParseFloat(floatStr, 64)       re">
+<meta name="twitter:description" content="第一种思路，利用利用fmt.Sprintf(),这种用到反射，效率不高func Round2(f float64, n int) float64 {       floatStr := fmt.Sprintf(&amp;quot;%.&amp;quot;+strconv.Itoa(n)+&amp;quot;f&amp;quot;, f)       inst, _ := strconv.ParseFloat(floatStr,">
     
         <link rel="alternate" type="application/atom+xml" title="我的自留地" href="/atom.xml">
     
@@ -160,7 +160,7 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#第一种思路，利用利用fmt-Sprintf"><span class="post-toc-number">1.</span> <span class="post-toc-text">第一种思路，利用利用fmt.Sprintf()</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#第二种思路，利用math包"><span class="post-toc-number">2.</span> <span class="post-toc-text">第二种思路，利用math包</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#第一种思路，利用利用fmt-Sprintf-这种用到反射，效率不高"><span class="post-toc-number">1.</span> <span class="post-toc-text">第一种思路，利用利用fmt.Sprintf(),这种用到反射，效率不高</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#第二种思路，利用math包，golang的浮点数计算结果并不是很准确加上四舍五入的时候用的是银行舍入法，和其他语言的四舍五入值对不上"><span class="post-toc-number">2.</span> <span class="post-toc-text">第二种思路，利用math包，golang的浮点数计算结果并不是很准确加上四舍五入的时候用的是银行舍入法，和其他语言的四舍五入值对不上</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#第三种使用strconv包的方法FormatFloat-，"><span class="post-toc-number">3.</span> <span class="post-toc-text">第三种使用strconv包的方法FormatFloat()，</span></a></li></ol>
         </nav>
     </aside>
 
@@ -180,7 +180,7 @@
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="第一种思路，利用利用fmt-Sprintf"><a href="#第一种思路，利用利用fmt-Sprintf" class="headerlink" title="第一种思路，利用利用fmt.Sprintf()"></a>第一种思路，利用利用fmt.Sprintf()</h3><pre><code>func Round2(f float64, n int) float64 {  
+            <h3 id="第一种思路，利用利用fmt-Sprintf-这种用到反射，效率不高"><a href="#第一种思路，利用利用fmt-Sprintf-这种用到反射，效率不高" class="headerlink" title="第一种思路，利用利用fmt.Sprintf(),这种用到反射，效率不高"></a>第一种思路，利用利用fmt.Sprintf(),这种用到反射，效率不高</h3><pre><code>func Round2(f float64, n int) float64 {  
     floatStr := fmt.Sprintf(&quot;%.&quot;+strconv.Itoa(n)+&quot;f&quot;, f)  
     inst, _ := strconv.ParseFloat(floatStr, 64)  
     return inst  
@@ -224,8 +224,11 @@
 %q      双引号围绕的字符串，由Go语法安全地转义  Printf(&quot;%q&quot;, &quot;Go语言&quot;)         &quot;Go语言&quot;
 %x      十六进制，小写字母，每字节两个字符      Printf(&quot;%x&quot;, &quot;golang&quot;)         676f6c616e67
 %X      十六进制，大写字母，每字节两个字符      Printf(&quot;%X&quot;, &quot;golang&quot;)         676F6C616E67
-</code></pre><h3 id="第二种思路，利用math包"><a href="#第二种思路，利用math包" class="headerlink" title="第二种思路，利用math包"></a>第二种思路，利用math包</h3><pre><code>func Round(f float64, n int) float64 {
-    pow10_n := math.Pow10(n)
+</code></pre><h3 id="第二种思路，利用math包，golang的浮点数计算结果并不是很准确加上四舍五入的时候用的是银行舍入法，和其他语言的四舍五入值对不上"><a href="#第二种思路，利用math包，golang的浮点数计算结果并不是很准确加上四舍五入的时候用的是银行舍入法，和其他语言的四舍五入值对不上" class="headerlink" title="第二种思路，利用math包，golang的浮点数计算结果并不是很准确加上四舍五入的时候用的是银行舍入法，和其他语言的四舍五入值对不上"></a>第二种思路，利用math包，golang的浮点数计算结果并不是很准确加上四舍五入的时候用的是银行舍入法，和其他语言的四舍五入值对不上</h3><pre><code>//先获取保留小数点后面位数的整数比，如两位小数就是100，
+func Round(f float64, n int) float64 {
+    pow10_n := math.Pow10(n)//对10取n次幂
+    //然后获取一个小数位比需要的大一位的浮点数，加上传递进来的浮点数，然后乘以10的n次幂，得到一个小数点后一位的
+    //浮点数，然后math.trunc取整,除以10的n次幂，去掉加权小数
     return math.Trunc((f+0.5/pow10_n)*pow10_n) / pow10_n
 }
 </code></pre><p>这里详细了解一下Pow10()和math.Rrunc()</p>
@@ -261,8 +264,8 @@ var pow10negtab32 = [...]float64{
 
 
 这是Trunc()的定义:
-func Trunc(x float64) float64
-</code></pre>
+func Trunc(x float64) float64 对传入的带小数点的float64取整数部分，返回一个float64的值
+</code></pre><h3 id="第三种使用strconv包的方法FormatFloat-，"><a href="#第三种使用strconv包的方法FormatFloat-，" class="headerlink" title="第三种使用strconv包的方法FormatFloat()，"></a>第三种使用strconv包的方法FormatFloat()，</h3>
         </div>
 
         <blockquote class="post-copyright">
@@ -270,12 +273,12 @@ func Trunc(x float64) float64
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-03-29T09:34:17.140Z" itemprop="dateUpdated">2018-03-29 17:34:17</time>
+    最后更新时间：<time datetime="2018-03-30T01:50:50.582Z" itemprop="dateUpdated">2018-03-30 09:50:50</time>
 </span><br>
 
 
         
-        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2018/03/29/golang float64保留多少位/" target="_blank" rel="external">https://zhangming1994/zhangming1994.github.io/2018/03/29/golang float64保留多少位/</a>
+        学习记录,方便查找,仅供参考
         
     </div>
     
@@ -302,7 +305,14 @@ func Trunc(x float64) float64
     </div>
 
     
-<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/04/02/css响应式布局/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">css响应式布局</h4>
+      </a>
+    </div>
   
 
   

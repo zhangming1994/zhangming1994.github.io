@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>node.js(一) | 我的自留地</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#000000">
+    
+    
+    <meta name="keywords" content="node.js">
+    <meta name="description" content="Node.js初步引入requrired模块:使用require指令载入Node.js模块//使用require指令载入http模块，并将实例化的HTTP赋值给变量 var http=required(&amp;quot;http&amp;quot;); 创建服务器//用http.createServer()创建服务器，并使用listen绑定端口，通过request，reponse参数来接收和响应数据 http.">
+<meta name="keywords" content="node.js">
+<meta property="og:type" content="article">
+<meta property="og:title" content="node.js(一)">
+<meta property="og:url" content="https://zhangming1994/zhangming1994.github.io/2018/04/02/node.js(一)/index.html">
+<meta property="og:site_name" content="我的自留地">
+<meta property="og:description" content="Node.js初步引入requrired模块:使用require指令载入Node.js模块//使用require指令载入http模块，并将实例化的HTTP赋值给变量 var http=required(&amp;quot;http&amp;quot;); 创建服务器//用http.createServer()创建服务器，并使用listen绑定端口，通过request，reponse参数来接收和响应数据 http.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-03-31T13:19:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="node.js(一)">
+<meta name="twitter:description" content="Node.js初步引入requrired模块:使用require指令载入Node.js模块//使用require指令载入http模块，并将实例化的HTTP赋值给变量 var http=required(&amp;quot;http&amp;quot;); 创建服务器//用http.createServer()创建服务器，并使用listen绑定端口，通过request，reponse参数来接收和响应数据 http.">
+    
+        <link rel="alternate" type="application/atom+xml" title="我的自留地" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.png">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">枫居住的街道</h5>
+          <a href="mailto:zhangyumingtfr@163.com" title="zhangyumingtfr@163.com" class="mail">zhangyumingtfr@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/work"  >
+                <i class="icon icon-lg icon-hand-peace-o"></i>
+                作品
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-user"></i>
+                关于我
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/zhangming1994" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                测试
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">node.js(一)</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">node.js(一)</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-04-02T08:39:08.389Z" itemprop="datePublished" class="page-time">
+  2018-04-02
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Node-js初步"><span class="post-toc-number">1.</span> <span class="post-toc-text">Node.js初步</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#引入requrired模块-使用require指令载入Node-js模块"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">引入requrired模块:使用require指令载入Node.js模块</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#创建服务器"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">创建服务器</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#接收请求和响应请求"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">接收请求和响应请求</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#NPM的使用"><span class="post-toc-number">2.</span> <span class="post-toc-text">NPM的使用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#使用场景"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">使用场景</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#使用Npm命令"><span class="post-toc-number">3.</span> <span class="post-toc-text">使用Npm命令</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#使用package-json"><span class="post-toc-number">4.</span> <span class="post-toc-text">使用package.json</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#版本号的问题"><span class="post-toc-number">5.</span> <span class="post-toc-text">版本号的问题</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#使用淘宝镜像"><span class="post-toc-number">6.</span> <span class="post-toc-text">使用淘宝镜像</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-node.js(一)"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">node.js(一)</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-04-02 16:39:08" datetime="2018-04-02T08:39:08.389Z"  itemprop="datePublished">2018-04-02</time>
+
+            
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h3 id="Node-js初步"><a href="#Node-js初步" class="headerlink" title="Node.js初步"></a>Node.js初步</h3><h4 id="引入requrired模块-使用require指令载入Node-js模块"><a href="#引入requrired模块-使用require指令载入Node-js模块" class="headerlink" title="引入requrired模块:使用require指令载入Node.js模块"></a>引入requrired模块:使用require指令载入Node.js模块</h4><pre><code>//使用require指令载入http模块，并将实例化的HTTP赋值给变量
+var http=required(&quot;http&quot;);
+</code></pre><h4 id="创建服务器"><a href="#创建服务器" class="headerlink" title="创建服务器"></a>创建服务器</h4><pre><code>//用http.createServer()创建服务器，并使用listen绑定端口，通过request，reponse参数来接收和响应数据
+http.createServer(function(request,response)){
+    //修改返回头和返回状态码
+    response.writeHead(200,{&apos;Content-Type&apos;:&apos;text/plain&apos;});
+    //发送响应数据
+    response.end(&apos;Hello World\n&apos;);
+}).listen(9999);
+</code></pre><h4 id="接收请求和响应请求"><a href="#接收请求和响应请求" class="headerlink" title="接收请求和响应请求"></a>接收请求和响应请求</h4><h3 id="NPM的使用"><a href="#NPM的使用" class="headerlink" title="NPM的使用"></a>NPM的使用</h3><p>NPM是随同Node.JS一起安装的包管理工具,能解决NodeJS代码部署上的很多问题</p>
+<h4 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h4><ol>
+<li>允许用户从NPM服务器下载别人编写的第三方包到本地使用</li>
+<li>允许用户从NPM服务器下载并安装别人写的命令行程序到本地使用</li>
+<li><p>允许用户将自己编写的包护着命令行上传到NPM服务器供别人使用<br>新版的node.js貌似集成了npm,我在安装完node.js之后就可以直接使用，<br> 可以升级,命令是:npm install npm -g<br> 使用淘宝镜像的命令:cnpm install npm -g</p>
+<h3 id="使用Npm命令"><a href="#使用Npm命令" class="headerlink" title="使用Npm命令"></a>使用Npm命令</h3><p> 比如安装web框架模块express：npm install express<br> 全局安装:npm install express -g<br> 本地安装: npm install express<br> 查看所有的全局安装模块：npm list -g<br> 查看某个模块的内容(比如版本号):npm list xxx<br> 卸载模块: npm uninstall xxx<br> 查看安装的包: npm ls<br> 更新模块: npm update xxx（-g 全局的更新）<br> 搜索模块: npm search xxx<br> 创建模块: npm init(只是单纯的使用这个，还涉及到在资源库注册用户等内容，还有发布)<br> npm资源库注册用户: npm adduser<br> 发布模块: npm publish<br> 清空本地缓存: npm cache clear<br> 帮助:npm help xxx</p>
+</li>
+</ol>
+<h3 id="使用package-json"><a href="#使用package-json" class="headerlink" title="使用package.json"></a>使用package.json</h3><p>package.json位于模块的目录下面，(node_modules/xxx/package.json)用于定义包的属性<br>package.json属性说明</p>
+<ol>
+<li>name 包名</li>
+<li>version 包版本号</li>
+<li>descreption 包描述</li>
+<li>homepage 包官网url</li>
+<li>author 作者</li>
+<li>contributors 包的其他贡献者</li>
+<li>keywords 关键字</li>
+<li>main 指定了程序的主入口文件，require(‘moduleName’)就会加载这个文件，这个字段的默认值是模块根目录下面的index.js</li>
+<li>repository 包代码存放地址的类型 可能是git svn github 等</li>
+<li>dependencies 依赖包表 如果依赖包没有安装，npm会自动安装在node_module下面</li>
+</ol>
+<h3 id="版本号的问题"><a href="#版本号的问题" class="headerlink" title="版本号的问题"></a>版本号的问题</h3><p>NPM使用语义版本号来管理代码<br>语义版本号氛围XYZ三位，分别代表主版本号，次版本号，补丁版本号，当代码更新的时候，版本号的更新原则如下</p>
+<ol>
+<li>修改bug，更新补丁版本号</li>
+<li>新增加功能，但是向下兼容，更新次版本号</li>
+<li>大的变动，向下不兼容，更新主版本号</li>
+</ol>
+<h3 id="使用淘宝镜像"><a href="#使用淘宝镜像" class="headerlink" title="使用淘宝镜像"></a>使用淘宝镜像</h3><pre><code>npm install -g cnpm --registry=https://registry.npm.taobao.org
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-03-31T13:19:16.000Z" itemprop="dateUpdated">2018-03-31 21:19:16</time>
+</span><br>
+
+
+        
+        学习记录,方便查找,仅供参考
+        
+    </div>
+    
+    <footer>
+        <a href="https://zhangming1994/zhangming1994.github.io">
+            <img src="/img/avatar.jpg" alt="枫居住的街道">
+            枫居住的街道
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/node-js/">node.js</a></li></ul>
+
+
+            
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/04/02/node.js(二)/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">node.js(二)</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>枫居住的街道 &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: false, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
