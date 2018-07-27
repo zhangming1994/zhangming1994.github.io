@@ -13,25 +13,23 @@
     
     
     
-    <title>centos修改root密码 | 我的自留地</title>
+    <title>tags: 软件架构模式 | 我的自留地</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#000000">
     
     
-    <meta name="keywords" content="Linux,CentOS">
-    <meta name="description" content="进去的时候按e，然后找到 LANG=zh_CN.UTF8，在后面加上init=/bin/sh,然后按ctrl+x然后将挂载文件系统修改为可写模式:mount -o remount,rw/然后执行passwd，修改密码,如果之前系统用了selinux,先执行touch /.autorelabel否则无法正常启动系统,然后exec /sbin/init或者 exec /sbin/reboot重启">
-<meta name="keywords" content="Linux,CentOS">
-<meta property="og:type" content="article">
-<meta property="og:title" content="centos修改root密码">
-<meta property="og:url" content="https://zhangming1994/zhangming1994.github.io/2018/03/12/centos修改root密码/index.html">
+    <meta name="keywords" content="">
+    <meta name="description" content="慎独">
+<meta property="og:type" content="website">
+<meta property="og:title" content="我的自留地">
+<meta property="og:url" content="https://zhangming1994/zhangming1994.github.io/tags/软件架构模式/index.html">
 <meta property="og:site_name" content="我的自留地">
-<meta property="og:description" content="进去的时候按e，然后找到 LANG=zh_CN.UTF8，在后面加上init=/bin/sh,然后按ctrl+x然后将挂载文件系统修改为可写模式:mount -o remount,rw/然后执行passwd，修改密码,如果之前系统用了selinux,先执行touch /.autorelabel否则无法正常启动系统,然后exec /sbin/init或者 exec /sbin/reboot重启">
+<meta property="og:description" content="慎独">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-12T09:02:01.922Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="centos修改root密码">
-<meta name="twitter:description" content="进去的时候按e，然后找到 LANG=zh_CN.UTF8，在后面加上init=/bin/sh,然后按ctrl+x然后将挂载文件系统修改为可写模式:mount -o remount,rw/然后执行passwd，修改密码,如果之前系统用了selinux,先执行touch /.autorelabel否则无法正常启动系统,然后exec /sbin/init或者 exec /sbin/reboot重启">
+<meta name="twitter:title" content="我的自留地">
+<meta name="twitter:description" content="慎独">
     
         <link rel="alternate" type="application/atom+xml" title="我的自留地" href="/atom.xml">
     
@@ -73,7 +71,7 @@
               </a>
             </li>
         
-            <li class="waves-block waves-effect">
+            <li class="waves-block waves-effect active">
               <a href="/tags"  >
                 <i class="icon icon-lg icon-tags"></i>
                 标签
@@ -119,7 +117,7 @@
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
         </a>
-        <div class="flex-col header-title ellipsis">centos修改root密码</div>
+        <div class="flex-col header-title ellipsis">tags: 软件架构模式</div>
         
         <div class="search-wrap" id="search-wrap">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
@@ -134,128 +132,121 @@
         
     </div>
 </header>
-<header class="content-header post-header">
+<header class="content-header tags-header">
 
     <div class="container fade-scale">
-        <h1 class="title">centos修改root密码</h1>
+        <h1 class="title">tags: 软件架构模式</h1>
         <h5 class="subtitle">
-            
-                <time datetime="2018-03-12T08:57:57.892Z" itemprop="datePublished" class="page-time">
-  2018-03-12
-</time>
-
-
             
         </h5>
     </div>
 
     
+<div class="tabs-bar container">
+    <nav class="tags-list">
+        <a href="/tags" style="-webkit-order:-1;order:-1" class="tags-list-item waves-effect waves-button waves-light
+            ">全部</a>
+        
+
+            <a href="/tags/Git/" style="-webkit-order:4;order:4" class="tags-list-item waves-effect waves-button waves-light">Git</a>
+
+        
+
+            <a href="/tags/Linux/" style="-webkit-order:5;order:5" class="tags-list-item waves-effect waves-button waves-light">Linux</a>
+
+        
+
+            <a href="/tags/CentOS/" style="-webkit-order:6;order:6" class="tags-list-item waves-effect waves-button waves-light">CentOS</a>
+
+        
+
+            <a href="/tags/css/" style="-webkit-order:7;order:7" class="tags-list-item waves-effect waves-button waves-light">css</a>
+
+        
+
+            <a href="/tags/Golang/" style="-webkit-order:8;order:8" class="tags-list-item waves-effect waves-button waves-light">Golang</a>
+
+        
+
+            <a href="/tags/git/" style="-webkit-order:9;order:9" class="tags-list-item waves-effect waves-button waves-light">git</a>
+
+        
+
+            <a href="/tags/Hexo/" style="-webkit-order:10;order:10" class="tags-list-item waves-effect waves-button waves-light">Hexo</a>
+
+        
+
+            <a href="/tags/博客/" style="-webkit-order:11;order:11" class="tags-list-item waves-effect waves-button waves-light">博客</a>
+
+        
+
+            <a href="/tags/GitHub-Pages/" style="-webkit-order:0;order:0" class="tags-list-item waves-effect waves-button waves-light">GitHub Pages</a>
+
+        
+
+            <a href="/tags/软件架构模式/" style="-webkit-order:1;order:1" class="tags-list-item waves-effect waves-button waves-light active">软件架构模式</a>
+
+        
+
+            <a href="/tags/node-js/" style="-webkit-order:2;order:2" class="tags-list-item waves-effect waves-button waves-light">node.js</a>
+
+        
+
+            <a href="/tags/Vue/" style="-webkit-order:3;order:3" class="tags-list-item waves-effect waves-button waves-light">Vue</a>
+
+        
+    </nav>
+    <!-- PC show more-->
+    <div class="tags-list-more">
+        <a href="javascript:;" onclick="BLOG.tabBar(this)" class="action tags-list-item waves-effect waves-circle waves-light"><i class="icon icon-ellipsis-h"></i></a>
+    </div>
+</div>
+
 
 
 </header>
 
-
-<div class="container body-wrap">
+<div class="container body-wrap fade">
     
+            <div class="waterfall">
+          
 
-<article id="post-centos修改root密码"
-  class="post-article article-type-post fade" itemprop="blogPost">
+            <div class="waterfall-item">
+  <article class="article-card archive-article">
+    <div class="post-meta">
+      <time class="post-time" title="2018-07-27 10:54:53" datetime="2018-07-27T02:54:53.949Z"  itemprop="datePublished">2018-07-27</time>
 
-    <div class="post-card">
-        <h1 class="post-card-title">centos修改root密码</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2018-03-12 16:57:57" datetime="2018-03-12T08:57:57.892Z"  itemprop="datePublished">2018-03-12</time>
-
-            
-
-
-            
-
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <p>进去的时候按e，然后找到 LANG=zh_CN.UTF8，在后面加上init=/bin/sh,然后按ctrl+x<br>然后将挂载文件系统修改为可写模式:mount -o remount,rw/<br>然后执行passwd，修改密码,如果之前系统用了selinux,先执行touch /.autorelabel否则无法正常启动系统,然后exec /sbin/init或者 exec /sbin/reboot重启</p>
-
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2018-03-12T09:02:01.922Z" itemprop="dateUpdated">2018-03-12 17:02:01</time>
-</span><br>
+      
 
 
-        
-        探索任何一个现象背后的真正原因，才是最有趣的事情
-        
     </div>
     
-    <footer>
-        <a href="https://zhangming1994/zhangming1994.github.io">
-            <img src="/img/avatar.jpg" alt="枫居住的街道">
-            枫居住的街道
-        </a>
-    </footer>
-</blockquote>
 
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2018/07/27/mvvm/">mvvm,mvc,mvp</a>
+    </h3>
+  
+
+
+
+    
+    <div class="post-footer">
         
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/软件架构模式/">软件架构模式</a></li></ul>
 
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CentOS/">CentOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-
-            
-
-
-        </div>
     </div>
-
     
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2018/03/26/tooltip框的方向控制/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">tooltip方向控制</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2018/03/12/golang文件操作/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">golang文件操作</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</article>
-
-
-
+  </article>
 </div>
+
+        
+            </div>
+        
+    
+</div>
+
 
         <footer class="footer">
     <div class="top">
