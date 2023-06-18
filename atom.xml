@@ -6,7 +6,7 @@
   <link href="http://zhangming1994.github.io/atom.xml" rel="self"/>
   
   <link href="http://zhangming1994.github.io/"/>
-  <updated>2022-08-17T09:23:37.103Z</updated>
+  <updated>2023-06-18T06:00:37.324Z</updated>
   <id>http://zhangming1994.github.io/</id>
   
   <author>
@@ -17,18 +17,38 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>关系型数据库的瓶颈和优化</title>
+    <link href="http://zhangming1994.github.io/2023/06/17/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%93%B6%E9%A2%88%E5%92%8C%E4%BC%98%E5%8C%96/"/>
+    <id>http://zhangming1994.github.io/2023/06/17/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%93%B6%E9%A2%88%E5%92%8C%E4%BC%98%E5%8C%96/</id>
+    <published>2023-06-17T13:28:53.000Z</published>
+    <updated>2023-06-18T06:00:37.324Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="数据库分类"><a href="#数据库分类" class="headerlink" title="数据库分类"></a>数据库分类</h2><pre><code>数据库大致可以分为传统的关系型数据库 mysql oracle sqlserver postgresql等</code></pre><p>非关系型数据库 hbase(列式数据库) mongodb 文档型数据库 redis 高性能kv存储 lucene 搜索引擎等</p><p>数据库查询开销</p><p>￼<img src="/img/1.png"></p><p>这个中间耗时操作有 建立TCP链接 生成执行计划 开表 从磁盘扫描数据 关闭链接</p><p>在mysql中间 主键查询是最为高效的一类查询 </p><p>索引字段如果太长 会导致order by无法在内存中见完成排序 使用mysql磁盘排序 并没有使用索引的排序</p><p>在mysql中间 数据按照页的方式来组织 默认大小16KB 包括页头 页尾 中间是记录<br>如果表中间存在大字段 达到了甚至超过了单页的大小 这个时候db就会新开一个数据页 当前页通过指针指向该页 一页不够 就会不断增加数据页直到可以存下为止 那么这个时候查询开销是很大的  严重的时候导致热页换出 引起系统抖动 ， </p><p>用了缓存 可能会有 缓存命中 缓存穿透 缓存失效 缓存一致性问题 </p><p>读写分离的原理就是将数据库读写操作分散到不同的节点上 </p><p>￼<img src="/img/2.png"></p><ol><li>数据库服务器搭建主从集群 主负责写操作 从负责读操作  主复制将数据同步到从<br>引入读写分离之后 可能导致 主从复制延迟 分配机制问题</li></ol><p>主从复制延迟可能达到秒级别 如果数据量大 可能达到分钟级别<br>读写操作区分 访问不同数据库 一般有两种方式： 程序代码封装 或者 中间件封装<br>程序代码封装：<br>￼<br><img src="/img/3.png"></p><p>这个做法无法多语言通用 主从切换 需要手动修改配置 </p><p>中间件封装：<br>地理一套系统出来 实现读写分离和数据库服务器连接的管理 中间件对业务服务器提供sql兼容的协议 业务服务器无需自己进行读写分离 </p><p>￼<img src="/img/4.png"></p><p>读写分离 分散了读写的压力 但是没有分散存储的压力 当数据量上来之后 单台数据库服务器的存储能力就会变成瓶颈 读写能力下降 数据文件备份和恢复困难</p><p>垂直分表： 将表中间不常用的占用大量空间的列拆分出去 代价是操作表的数量增加<br>水平拆分： 适合行数较大的表 会导致更多的复杂度 join count等 </p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;数据库分类&quot;&gt;&lt;a href=&quot;#数据库分类&quot; class=&quot;headerlink&quot; title=&quot;数据库分类&quot;&gt;&lt;/a&gt;数据库分类&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;数据库大致可以分为传统的关系型数据库 mysql oracle sqlserver postgres</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>Hello World</title>
-    <link href="http://zhangming1994.github.io/2022/08/15/hello-world/"/>
-    <id>http://zhangming1994.github.io/2022/08/15/hello-world/</id>
-    <published>2022-08-15T03:06:04.211Z</published>
-    <updated>2022-08-17T09:23:37.103Z</updated>
+    <link href="http://zhangming1994.github.io/2022/08/17/hello-world/"/>
+    <id>http://zhangming1994.github.io/2022/08/17/hello-world/</id>
+    <published>2022-08-17T09:23:37.000Z</published>
+    <updated>2023-06-17T13:56:29.887Z</updated>
     
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    <content type="html"><![CDATA[<h3 id="生成新的文章"><a href="#生成新的文章" class="headerlink" title="生成新的文章"></a>生成新的文章</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>更多: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>更多: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="生成"><a href="#生成" class="headerlink" title="生成"></a>生成</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>更多: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>更多: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p><h3 id="常用命令-注意以下命令需要切换到blog文件夹-cd-blog-执行"><a href="#常用命令-注意以下命令需要切换到blog文件夹-cd-blog-执行" class="headerlink" title="常用命令[注意以下命令需要切换到blog文件夹(cd blog)执行]"></a>常用命令[注意以下命令需要切换到blog文件夹(cd blog)执行]</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">hexo n &quot;文章名称&quot;  =&gt; hexo new &quot;文章名称&quot;  #这两个都是创建新文章，前者是简写模式，下同，new后面加一个draft可以生成草稿</span><br><span class="line">hexo p  =&gt; hexo publish  # 发布草稿</span><br><span class="line">hexo g  =&gt; hexo generate  # 生成</span><br><span class="line">hexo s  =&gt; hexo server  # 启动服务预览</span><br><span class="line">hexo d  =&gt; hexo deploy  # 部署</span><br><span class="line"> </span><br><span class="line">hexo server   # Hexo 会监视文件变动并自动更新，无须重启服务器。</span><br><span class="line">hexo server -s   # 静态模式</span><br><span class="line">hexo server -p 5000   #更 改端口</span><br><span class="line">hexo server -i 192.168.1.1   # 自定义IP</span><br><span class="line">hexo clean   # 清除缓存，网页正常情况下可以忽略此条命令</span><br></pre></td></tr></table></figure>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for</summary>
+    <summary type="html">&lt;h3 id=&quot;生成新的文章&quot;&gt;&lt;a href=&quot;#生成新的文章&quot; class=&quot;headerlink&quot; title=&quot;生成新的文章&quot;&gt;&lt;/a&gt;生成新的文章&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutt</summary>
       
     
     
