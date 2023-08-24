@@ -1,0 +1,181 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Golang内存对齐 | 赵客缦胡缨，吴钩霜雪明</title><meta name="keywords" content="博客阅读 Golang"><meta name="author" content="铁马冰河"><meta name="copyright" content="铁马冰河"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="阅读博客 https:&#x2F;&#x2F;segmentfault.com&#x2F;a&#x2F;1190000040528007 记录 虚拟内存就是在程序和无力内存之间引入一个中间层 这个中间层就是虚拟内存  就实现了对进程地址和无力地址的隔离  内存中间是划分为用户空间和内核空间的￼￼￼ 用户空间分成了5个不同的内存区域   代码段 存放可执行文件的操作指令 只读 数据段 用来存放可执行文件中间已经初始化的全局变量 存放静态变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang内存对齐">
+<meta property="og:url" content="http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/index.html">
+<meta property="og:site_name" content="赵客缦胡缨，吴钩霜雪明">
+<meta property="og:description" content="阅读博客 https:&#x2F;&#x2F;segmentfault.com&#x2F;a&#x2F;1190000040528007 记录 虚拟内存就是在程序和无力内存之间引入一个中间层 这个中间层就是虚拟内存  就实现了对进程地址和无力地址的隔离  内存中间是划分为用户空间和内核空间的￼￼￼ 用户空间分成了5个不同的内存区域   代码段 存放可执行文件的操作指令 只读 数据段 用来存放可执行文件中间已经初始化的全局变量 存放静态变">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhangming1994.github.io/images/golang/storageAlignment1.png">
+<meta property="article:published_time" content="2023-08-24T08:44:07.000Z">
+<meta property="article:modified_time" content="2023-08-24T08:52:27.450Z">
+<meta property="article:author" content="铁马冰河">
+<meta property="article:tag" content="博客阅读 Golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhangming1994.github.io/images/golang/storageAlignment1.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Golang内存对齐',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-08-24 16:52:27'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="赵客缦胡缨，吴钩霜雪明" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/20083286.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/../images/golang/storageAlignment1.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">赵客缦胡缨，吴钩霜雪明</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Golang内存对齐</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-24T08:44:07.000Z" title="发表于 2023-08-24 16:44:07">2023-08-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-24T08:52:27.450Z" title="更新于 2023-08-24 16:52:27">2023-08-24</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Golang内存对齐"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>阅读博客 <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000040528007">https://segmentfault.com/a/1190000040528007</a> 记录</p>
+<p>虚拟内存就是在程序和无力内存之间引入一个中间层 这个中间层就是虚拟内存  就实现了对进程地址和无力地址的隔离 </p>
+<p>内存中间是划分为用户空间和内核空间的<br>￼￼<img src="/../images/golang/storageAlignment1.png">￼</p>
+<p>用户空间分成了5个不同的内存区域 </p>
+<ol>
+<li>代码段 存放可执行文件的操作指令 只读</li>
+<li>数据段 用来存放可执行文件中间已经初始化的全局变量 存放静态变量和全局变量</li>
+<li>BSS段 用来存放没有初始化的全局变量</li>
+<li>堆区 存放动态分配的内存段 </li>
+<li>栈区 用来存放临时创建的局部变量</li>
+</ol>
+<p>￼￼￼<img src="/../images/golang/storageAlignment2.png">￼</p>
+<p>编译器：编译器就是将“一种语言（通常为高级语言）”翻译为“另一种语言（通常为低级语言）”的程序。一个现代编译器的主要工作流程：源代码 (source code) → 预处理器(preprocessor) → 编译器 (compiler) → 目标代码 (object code) → 链接器 (Linker) → 可执行程序(executables)。</p>
+<p>内存对齐是指首地址对齐 而不是说每个变量大小对齐 需要内存对齐的原因:</p>
+<ol>
+<li>有些CPU可以访问任意位置数据 但是有些只能访问特定位置数据</li>
+<li>CPU每次寻址都是耗费时间的 CPU访问内存的时候不是逐个字节访问的 而是按照字长 访问 所以尽可能在自然边界上对齐 如果没有对齐 处理器需要访问两次内存</li>
+</ol>
+<p>￼￼<img src="/../images/golang/storageAlignment3.png">￼<br>￼￼<img src="/../images/golang/storageAlignment4.png">￼<br>一般来说 32位操作系统默认对其系数是4 64位的操作系统是8  当然这个是默认的  有些事可以修改的 比如C语言 通过预编译指令。#pragram pack(n) 可以修改这个对齐系数 但是GO语言没有这个 主要是我没找到</p>
+<p>GO语言可以通过unsafe.Alignof获得相应的对齐系数 对齐系数都符合2^n这个规律，最大也不会超过8。</p>
+<p>C语言的对齐规则和Go基本都是一样的 不知道新的版本会不会变化 </p>
+<ol>
+<li>对于结构体的各个成员 第一个成员位于偏移量为0的位置 结构体的第一个成员的offset为0 以后每个成员相对于结构体首地址的offset都是这个成员大小和有效对齐值中间较小的那个整数倍 如果需要编译器会在成员之间填充字节</li>
+<li>除了结构体成员需要对齐 结构本身也需要对齐 结构的长度必须是编译器默认的对齐长度和成员中最长类型中最小的数据大小的倍数对齐</li>
+</ol>
+<p>￼￼￼<img src="/../images/golang/storageAlignment5.png">￼<br> 就上面这个 64位的机器  对齐参数是8  那么ABCD的对齐值分别是 4 8 8 1 占用内存分别是 4 24 16 1 </p>
+<p>A int32类型 对齐值是4 大小是4 所以在第一位<br>B 对齐值是8 大小是 24 按照第一条规则 偏移量是这个成员的大小24和对齐值8中间较小的那个 那么偏移量就是8  也就是那个较小的整数倍  所以4-7会由编译器进行填充 一般是0值 也就是空洞 那么这个时候9到32位就是第二个字段8<br>C 对齐值也是8 大小为16  内存偏移也是要是8的倍数 因为之前到了 32 所以刚好是8的倍数 不需要填充 从32到48就是 c<br>D 对齐值是1 大小为1 所以内存偏移值要是1的倍数 48 是倍数 所以 48-49就是D</p>
+<p>这是第一步的结构体内部字段对齐  现在占用49字节 然后按照第二规则进行结构体的对齐</p>
+<p>默认是8 最大24 所以是8 目前长度是49 不是8的倍数 所以应该是56 那么补7位 就需要</p>
+<p>TCMalloc:<br>￼<br>￼￼<img src="/../images/golang/storageAlignment6.png">￼<br>GO:<br>￼<br>￼￼<img src="/../images/golang/storageAlignment7.png">￼</p>
+<p>mheap里保存了两棵二叉排序树，按span的page数量进行排序：<br>free：free中保存的span是空闲并且非垃圾回收的span。<br>scav：scav中保存的是空闲并且已经垃圾回收的span。<br>如果是垃圾回收导致的span释放，span会被加入到scav，否则加入到free，比如刚从OS申请的的内存也组成的Span。</p>
+<p>mheap与PageHeap也有不同点：mheap把Span组织成了树结构，而不是链表，并且还是2棵树，然后把Span分配到heapArena进行管理，它包含地址映射和span是否包含指针等位图，这样做的主要原因是为了更高效的利用内存：分配、回收和再利用</p>
+<p>￼<br>￼￼<img src="/../images/golang/storageAlignment8.png">￼</p>
+<p>object size：代码里简称size，指申请内存的对象大小。<br>size class：代码里简称class，它是size的级别，相当于把size归类到一定大小的区间段，比如size[1,8]属于size class 1，size(8,16]属于size class 2。<br>span class：指span的级别，但span class的大小与span的大小并没有正比关系。span class主要用来和size class做对应，1个size class对应2个span class，2个span class的span大小相同，只是功能不同，1个用来存放包含指针的对象，一个用来存放不包含指针的对象，不包含指针对象的Span就无需GC扫描了。<br>num of page：代码里简称npage，代表Page的数量，其实就是Span包含的页数，用来分配内存。</p>
+<p>￼￼<img src="/../images/golang/storageAlignment9.png">￼<br>￼</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://zhangming1994.github.io">铁马冰河</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://zhangming1994.github.io" target="_blank">赵客缦胡缨，吴钩霜雪明</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%8D%9A%E5%AE%A2%E9%98%85%E8%AF%BB-Golang/">博客阅读 Golang</a></div><div class="post_share"><div class="social-share" data-image="/../images/golang/storageAlignment1.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/08/24/IO%E6%A8%A1%E5%9E%8B/"><img class="next-cover" src="/../images/system/io1.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">IO模型</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/20083286.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">铁马冰河</div><div class="author-info__description">实践出真知,Pain comes from incompetence</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhangming1994"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/zhangming1994" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我的博客来了</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" title="Golang内存对齐"><img src="/../images/golang/storageAlignment1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存对齐"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" title="Golang内存对齐">Golang内存对齐</a><time datetime="2023-08-24T08:44:07.000Z" title="发表于 2023-08-24 16:44:07">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/IO%E6%A8%A1%E5%9E%8B/" title="IO模型"><img src="/../images/system/io1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IO模型"/></a><div class="content"><a class="title" href="/2023/08/24/IO%E6%A8%A1%E5%9E%8B/" title="IO模型">IO模型</a><time datetime="2023-08-24T08:37:14.000Z" title="发表于 2023-08-24 16:37:14">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" title="Golang内存管理-垃圾回收"><img src="/../images/golang/garbge1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理-垃圾回收"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" title="Golang内存管理-垃圾回收">Golang内存管理-垃圾回收</a><time datetime="2023-08-24T03:23:24.000Z" title="发表于 2023-08-24 11:23:24">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/" title="Golang内存管理(二)"><img src="/../images/golang/storage6.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理(二)"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/" title="Golang内存管理(二)">Golang内存管理(二)</a><time datetime="2023-08-24T03:11:05.000Z" title="发表于 2023-08-24 11:11:05">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/" title="Golang内存管理(一)"><img src="/../images/golang/storage1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理(一)"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/" title="Golang内存管理(一)">Golang内存管理(一)</a><time datetime="2023-08-24T02:58:50.000Z" title="发表于 2023-08-24 10:58:50">2023-08-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 铁马冰河</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

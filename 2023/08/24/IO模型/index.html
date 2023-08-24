@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>IO模型 | 赵客缦胡缨，吴钩霜雪明</title><meta name="keywords" content="操作系统"><meta name="author" content="铁马冰河"><meta name="copyright" content="铁马冰河"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="同步IO 异步IO 阻塞IO 非阻塞IO 阻塞和非阻塞的区别： 线程是否挂起异步和同步的区别： 主动和被动的通知方式 周转时间： 任务到达到任务完成之间的时间响应时间： 任务到达到任务首次被调度的时间 要求高的平均周转时间，必然降低平均响应时间 同步IO：阻塞IO： 就是某一个请求 请求过去之后 被请求的没有准备好 请求方要一直等着对方准备好 然后将数据给出来之后才能去做其他事情非阻塞IO:  就">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IO模型">
+<meta property="og:url" content="http://zhangming1994.github.io/2023/08/24/IO%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="赵客缦胡缨，吴钩霜雪明">
+<meta property="og:description" content="同步IO 异步IO 阻塞IO 非阻塞IO 阻塞和非阻塞的区别： 线程是否挂起异步和同步的区别： 主动和被动的通知方式 周转时间： 任务到达到任务完成之间的时间响应时间： 任务到达到任务首次被调度的时间 要求高的平均周转时间，必然降低平均响应时间 同步IO：阻塞IO： 就是某一个请求 请求过去之后 被请求的没有准备好 请求方要一直等着对方准备好 然后将数据给出来之后才能去做其他事情非阻塞IO:  就">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhangming1994.github.io/images/system/io1.png">
+<meta property="article:published_time" content="2023-08-24T08:37:14.000Z">
+<meta property="article:modified_time" content="2023-08-24T08:43:05.014Z">
+<meta property="article:author" content="铁马冰河">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhangming1994.github.io/images/system/io1.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zhangming1994.github.io/2023/08/24/IO%E6%A8%A1%E5%9E%8B/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'IO模型',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-08-24 16:43:05'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="赵客缦胡缨，吴钩霜雪明" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/20083286.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/../images/system/io1.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">赵客缦胡缨，吴钩霜雪明</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">IO模型</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-24T08:37:14.000Z" title="发表于 2023-08-24 16:37:14">2023-08-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-24T08:43:05.014Z" title="更新于 2023-08-24 16:43:05">2023-08-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="IO模型"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>同步IO 异步IO 阻塞IO 非阻塞IO</p>
+<p>阻塞和非阻塞的区别： 线程是否挂起<br>异步和同步的区别： 主动和被动的通知方式</p>
+<p>周转时间： 任务到达到任务完成之间的时间<br>响应时间： 任务到达到任务首次被调度的时间</p>
+<p>要求高的平均周转时间，必然降低平均响应时间</p>
+<p>同步IO：<br>阻塞IO： 就是某一个请求 请求过去之后 被请求的没有准备好 请求方要一直等着对方准备好 然后将数据给出来之后才能去做其他事情<br>非阻塞IO:  就是请求过去 对方告诉我我还没准备好 我就走开做其他的 等一下再来请求 如果还是没有就又离开做其他的 当哪次请求有了的时候就要一直等到拿到所需要的东西了 才能走开 这个拿数据的过程是不能走开的 其实 应该还是个同步IO<br>信号驱动IO模型： 注册一个信号函数 当我需要的东西准备好了 再通知我去获取 但是获取的这个过程中间 我还是不能做其他的 觉得应该还是同步IO<br>异步IO模型： 一个调用过去 我可以不关心数据是不是没准备好 被调用房将数据准备好了 放到指定位置了 通知我 已经好了 这个期间我可以做其他的的事情 也不用等着接收数据 </p>
+<p>POSIX<br>同步IO、异步IO、阻塞IO、非阻塞IO，这几个词常见于各种各样的与网络相关的文章之中，往往不同上下文中它们的意思是不一样的，以致于我在很长一段时间对此感到困惑，所以想写一篇文章整理一下。<br>POSIX(可移植操作系统接口)把同步IO操作定义为导致进程阻塞直到IO完成的操作，反之则是异步IO<br>按POSIX的描述似乎把同步和阻塞划等号，异步和非阻塞划等号，但是为什么有的人说同步IO不等于阻塞IO呢？先来说说几种常见的IO模型吧。<br>IO模型<br>这里统一使用Linux下的系统调用recv作为例子，它用于从套接字上接收一个消息，因为是一个系统调用，所以调用时会从用户进程空间切换到内核空间运行一段时间再切换回来。默认情况下recv会等到网络数据到达并且复制到用户进程空间或者发生错误时返回，而第4个参数flags可以让它马上返回。</p>
+<ul>
+<li><p>阻塞IO模型<br>使用recv的默认参数一直等数据直到拷贝到用户空间，这段时间内进程始终阻塞。A同学用杯子装水，打开水龙头装满水然后离开。这一过程就可以看成是使用了阻塞IO模型，因为如果水龙头没有水，他也要等到有水并装满杯子才能离开去做别的事情。很显然，这种IO模型是同步的。<br>￼<br>￼<img src="/../images/system/io1.png"></p>
+</li>
+<li><p>非阻塞IO模型<br>改变flags，让recv不管有没有获取到数据都返回，如果没有数据那么一段时间后再调用recv看看，如此循环。B同学也用杯子装水，打开水龙头后发现没有水，它离开了，过一会他又拿着杯子来看看……在中间离开的这些时间里，B同学离开了装水现场(回到用户进程空间)，可以做他自己的事情。这就是非阻塞IO模型。但是它只有是检查无数据的时候是非阻塞的，在数据到达的时候依然要等待复制数据到用户空间(等着水将水杯装满)，因此它还是同步IO。<br>￼￼<img src="/../images/system/io2.png"></p>
+</li>
+<li><p>IO复用模型<br>这里在调用recv前先调用select或者poll，这2个系统调用都可以在内核准备好数据(网络数据到达内核)时告知用户进程，这个时候再调用recv一定是有数据的。因此这一过程中它是阻塞于select或poll，而没有阻塞于recv，有人将非阻塞IO定义成在读写操作时没有阻塞于系统调用的IO操作(不包括数据从内核复制到用户空间时的阻塞，因为这相对于网络IO来说确实很短暂)，如果按这样理解，这种IO模型也能称之为非阻塞IO模型，但是按POSIX来看，它也是同步IO，那么也和楼上一样称之为同步非阻塞IO吧。<br>这种IO模型比较特别，分个段。因为它能同时监听多个文件描述符(fd)。这个时候C同学来装水，发现有一排水龙头，舍管阿姨告诉他这些水龙头都还没有水，等有水了告诉他。于是等啊等(select调用中)，过了一会阿姨告诉他有水了，但不知道是哪个水龙头有水，自己看吧。于是C同学一个个打开，往杯子里装水(recv)。这里再顺便说说鼎鼎大名的epoll(高性能的代名词啊)，epoll也属于IO复用模型，主要区别在于舍管阿姨会告诉C同学哪几个水龙头有水了，不需要一个个打开看(当然还有其它区别)。<br>￼￼<img src="/../images/system/io3.png"></p>
+</li>
+<li><p>信号驱动IO模型<br>通过调用sigaction注册信号函数，等内核数据准备好的时候系统中断当前程序，执行信号函数(在这里面调用recv)。D同学让舍管阿姨等有水的时候通知他(注册信号函数)，没多久D同学得知有水了，跑去装水。是不是很像异步IO？很遗憾，它还是同步IO(省不了装水的时间啊)。<br>￼￼<img src="/../images/system/io4.png"></p>
+</li>
+<li><p>异步IO模型<br>调用aio_read，让内核等数据准备好，并且复制到用户进程空间后执行事先指定好的函数。E同学让舍管阿姨将杯子装满水后通知他。整个过程E同学都可以做别的事情(没有recv)，这才是真正的异步IO。<br>￼￼<img src="/../images/system/io5.png"><br>最后，总结比较下五种IO模型：<br>￼￼<img src="/../images/system/io6.png"><br>总结<br>IO分两阶段：<br>1.数据准备阶段<br>2.内核空间复制回用户进程缓冲区阶段<br>一般来讲：阻塞IO模型、非阻塞IO模型、IO复用模型(select&#x2F;poll&#x2F;epoll)、信号驱动IO模型都属于同步IO，因为阶段2是阻塞的(尽管时间很短)。只有异步IO模型是符合POSIX异步IO操作含义的，不管在阶段1还是阶段2都可以干别的事</p>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://zhangming1994.github.io">铁马冰河</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://zhangming1994.github.io/2023/08/24/IO%E6%A8%A1%E5%9E%8B/">http://zhangming1994.github.io/2023/08/24/IO%E6%A8%A1%E5%9E%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://zhangming1994.github.io" target="_blank">赵客缦胡缨，吴钩霜雪明</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></div><div class="post_share"><div class="social-share" data-image="/../images/system/io1.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/"><img class="prev-cover" src="/../images/golang/storageAlignment1.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Golang内存对齐</div></div></a></div><div class="next-post pull-right"><a href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/"><img class="next-cover" src="/../images/golang/garbge1.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Golang内存管理-垃圾回收</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/20083286.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">铁马冰河</div><div class="author-info__description">实践出真知,Pain comes from incompetence</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhangming1994"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/zhangming1994" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我的博客来了</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" title="Golang内存对齐"><img src="/../images/golang/storageAlignment1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存对齐"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" title="Golang内存对齐">Golang内存对齐</a><time datetime="2023-08-24T08:44:07.000Z" title="发表于 2023-08-24 16:44:07">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/IO%E6%A8%A1%E5%9E%8B/" title="IO模型"><img src="/../images/system/io1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IO模型"/></a><div class="content"><a class="title" href="/2023/08/24/IO%E6%A8%A1%E5%9E%8B/" title="IO模型">IO模型</a><time datetime="2023-08-24T08:37:14.000Z" title="发表于 2023-08-24 16:37:14">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" title="Golang内存管理-垃圾回收"><img src="/../images/golang/garbge1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理-垃圾回收"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" title="Golang内存管理-垃圾回收">Golang内存管理-垃圾回收</a><time datetime="2023-08-24T03:23:24.000Z" title="发表于 2023-08-24 11:23:24">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/" title="Golang内存管理(二)"><img src="/../images/golang/storage6.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理(二)"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/" title="Golang内存管理(二)">Golang内存管理(二)</a><time datetime="2023-08-24T03:11:05.000Z" title="发表于 2023-08-24 11:11:05">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/" title="Golang内存管理(一)"><img src="/../images/golang/storage1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理(一)"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/" title="Golang内存管理(一)">Golang内存管理(一)</a><time datetime="2023-08-24T02:58:50.000Z" title="发表于 2023-08-24 10:58:50">2023-08-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 铁马冰河</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
