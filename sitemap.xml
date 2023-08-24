@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://zhangming1994.github.io/2022/08/17/hello-world/</loc>
+    
+    <lastmod>2023-08-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/</loc>
     
     <lastmod>2023-08-24</lastmod>
@@ -38,15 +47,6 @@
   </url>
   
   <url>
-    <loc>http://zhangming1994.github.io/2022/08/17/hello-world/</loc>
-    
-    <lastmod>2023-08-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://zhangming1994.github.io/tags/index.html</loc>
     
     <lastmod>2022-08-16</lastmod>
@@ -74,7 +74,7 @@
 
   
   <url>
-    <loc>http://zhangming1994.github.io/tags/%E5%8D%9A%E5%AE%A2%E9%98%85%E8%AF%BB-%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/</loc>
+    <loc>http://zhangming1994.github.io/tags/Golang/</loc>
     <lastmod>2023-08-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -88,7 +88,7 @@
   </url>
   
   <url>
-    <loc>http://zhangming1994.github.io/tags/Golang/</loc>
+    <loc>http://zhangming1994.github.io/tags/%E5%8D%9A%E5%AE%A2%E9%98%85%E8%AF%BB-%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/</loc>
     <lastmod>2023-08-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -97,7 +97,7 @@
 
   
   <url>
-    <loc>http://zhangming1994.github.io/categories/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</loc>
+    <loc>http://zhangming1994.github.io/categories/Golang/</loc>
     <lastmod>2023-08-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -111,7 +111,7 @@
   </url>
   
   <url>
-    <loc>http://zhangming1994.github.io/categories/Golang/</loc>
+    <loc>http://zhangming1994.github.io/categories/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</loc>
     <lastmod>2023-08-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
