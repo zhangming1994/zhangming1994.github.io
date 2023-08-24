@@ -1,0 +1,357 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Golang内存管理(二) | 赵客缦胡缨，吴钩霜雪明</title><meta name="keywords" content="Golang"><meta name="author" content="铁马冰河"><meta name="copyright" content="铁马冰河"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Go 的内存管理基本上参考 tcmalloc 来实现的， Go 的内存是自动管理的，我们可以随意定义变量直接使用，不需要考虑变量背后的内存申请和释放的问题 池程序动态申请内存空间，是要使用系统调用的，比如 Linux 系统上是调用 mmap 方法实现的。但对于大型系统服务来说，直接调用 mmap 申请内存，会有一定的代价：  系统调用会导致程序进入内核态，内核分配完内存后（也就是上篇所讲的，对虚拟">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang内存管理(二)">
+<meta property="og:url" content="http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/index.html">
+<meta property="og:site_name" content="赵客缦胡缨，吴钩霜雪明">
+<meta property="og:description" content="Go 的内存管理基本上参考 tcmalloc 来实现的， Go 的内存是自动管理的，我们可以随意定义变量直接使用，不需要考虑变量背后的内存申请和释放的问题 池程序动态申请内存空间，是要使用系统调用的，比如 Linux 系统上是调用 mmap 方法实现的。但对于大型系统服务来说，直接调用 mmap 申请内存，会有一定的代价：  系统调用会导致程序进入内核态，内核分配完内存后（也就是上篇所讲的，对虚拟">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhangming1994.github.io/img/golang/storage6.png">
+<meta property="article:published_time" content="2023-08-24T03:11:05.000Z">
+<meta property="article:modified_time" content="2023-08-24T03:18:58.308Z">
+<meta property="article:author" content="铁马冰河">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhangming1994.github.io/img/golang/storage6.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Golang内存管理(二)',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-08-24 11:18:58'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="赵客缦胡缨，吴钩霜雪明" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/20083286.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/golang/storage6.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">赵客缦胡缨，吴钩霜雪明</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Golang内存管理(二)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-24T03:11:05.000Z" title="发表于 2023-08-24 11:11:05">2023-08-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-24T03:18:58.308Z" title="更新于 2023-08-24 11:18:58">2023-08-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Golang/">Golang</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Golang内存管理(二)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>Go 的内存管理基本上参考 tcmalloc 来实现的， Go 的内存是自动管理的，我们可以随意定义变量直接使用，不需要考虑变量背后的内存申请和释放的问题</p>
+<p>池<br>程序动态申请内存空间，是要使用系统调用的，比如 Linux 系统上是调用 mmap 方法实现的。但对于大型系统服务来说，直接调用 mmap 申请内存，会有一定的代价：</p>
+<ol>
+<li>系统调用会导致程序进入内核态，内核分配完内存后（也就是上篇所讲的，对虚拟地址和物理地址进行映射等操作），再返回到用户态。</li>
+<li>频繁申请很小的内存空间，容易出现大量内存碎片，增大操作系统整理碎片的压力。</li>
+<li>为了保证内存访问具有良好的局部性，开发者需要投入大量的精力去做优化，这是一个很重的负担</li>
+</ol>
+<p>对象池：</p>
+<ol>
+<li>不需要频繁申请内存了，而是从对象池里拿，程序不会频繁进入内核态</li>
+<li>因为一次性申请一个连续的大空间，对象池会被重复利用，不会出现碎片。</li>
+<li>程序频繁访问的就是对象池背后的同一块内存空间，局部性良好。</li>
+</ol>
+<p>这样做会造成一定的内存浪费，我们可以定时检测对象池的大小，保证可用对象的数量在一个合理的范围，少了就提前申请，多了就自动释放。<br>如果某种资源的申请和回收是昂贵的，我们都可以通过建立资源池的方式来解决，其他比如连接池，内存池等等，都是一个思路</p>
+<p>Golang 内存管理<br>Golang 的内存管理本质上就是一个内存池，只不过内部做了很多的优化。比如自动伸缩内存池大小，合理的切割内存块等等。</p>
+<p>内存池 mheap<br>Golang 的程序在启动之初，会一次性从操作系统那里申请一大块内存作为内存池。这块内存空间会放在一个叫 mheap 的 struct 中管理，mheap 负责将这一整块内存切割成不同的区域，并将其中一部分的内存切割成合适的大小，分配给用户使用。</p>
+<p>page: 内存页，一块 8K 大小的内存空间。Go 与操作系统之间的内存申请和释放，都是以 page 为单位的。<br>span: 内存块，一个或多个连续的 page 组成一个 span。<br>sizeclass: 空间规格，每个 span 都带有一个 sizeclass，标记着该 span 中的 page 应该如何使用<br>object: 对象，用来存储一个变量数据内存空间，一个 span 在初始化时，会被切割成一堆等大的 object。假设 object 的大小是 16B，span 大小是 8K，那么就会把 span 中的 page 就会被初始化 8K &#x2F; 16B &#x3D; 512 个 object。所谓内存分配，就是分配一个 object 出去。</p>
+<p>Page—span—</p>
+<p><img src="/img/golang/storage6.png"><br>￼<br>￼<br>不同span的sizeclass不同 那么里面的page就会按照不同的规格切割成等大的object用作分配<br>Go1.17.2 测试初始堆内存大约是 3866624byte [字节 1byte&#x3D;8bit 1byte&#x3D;1B 1KB&#x3D;1024B 1MB&#x3D;1024KB]  就是3776KB</p>
+<p>内部的整体内存布局如下图所示</p>
+<p><img src="/img/golang/storage7.png"></p>
+<p>图中的空间大小，是 Go 向操作系统申请的虚拟内存地址空间，操作系统会将该段地址空间预留出来不做它用；而不是真的创建出这么大的虚拟内存，在页表中创建出这么大的映射关系</p>
+<p>mheap.spans：用来存储 page 和 span 信息，比如一个 span 的起始地址是多少，有几个 page，已使用了多大等等。<br>mheap.bitmap 存储着各个 span 中对象object的标记信息，比如对象是否可回收等等。<br>mheap.arena_start: 将要分配给应用程序使用的空间。</p>
+<p>mcentral<br>用途相同的span将会以链表的形式组织在一起 这里的用途用sizeclass来表示 就是指这个span用来存储哪种大小的对象 ，sizeclass 1.5版本共67种<br>￼<br><img src="/img/golang/storage8.png"></p>
+<p>找到合适的span之后 会从中取出一个object返回给上层使用 这些span被放在一个叫做mcentral的结构中间管理<br>Mheap会将从os那里申请过来的内存初始化成一个大的Span(sizeclass&#x3D;0) 然后根据需要从这个大的span切分出小的span 放在mcentral中间管理 大的span由mheap.freelarge和mheap.busylarge来管理 如果mcentral中间span不够了 就从mheap.freelarge拿 这里不够就再从os申请内存 </p>
+<p>type mheap struct {<br>    lock      mutex<br>    free      [_MaxMHeapList]mspan &#x2F;&#x2F; free lists of given length， 1M 以下<br>    freelarge mspan                &#x2F;&#x2F; free lists length &gt;&#x3D; _MaxMHeapList, &gt;&#x3D; 1M<br>    busy      [_MaxMHeapList]mspan &#x2F;&#x2F; busy lists of large objects of given length<br>    busylarge mspan                &#x2F;&#x2F; busy lists of large objects length &gt;&#x3D; _MaxMHeapList</p>
+<pre><code>central [_NumSizeClasses]struct &#123;     // _NumSizeClasses = 67
+    mcentral mcentral
+&#125;
+</code></pre>
+<p>}</p>
+<p>type mcentral struct {<br>    lock      mutex &#x2F;&#x2F; 分配时需要加锁 避免并发情况下 多个协程同时申请内存 导致的冲突  但是 这个也会使得内存申请成为整个系统的瓶颈<br>    sizeclass int32 &#x2F;&#x2F; 哪种 sizeclass<br>    nonempty  mspan &#x2F;&#x2F; 还有可用的空间的 span 链表<br>    empty     mspan &#x2F;&#x2F; 没有可用的空间的 span 列表<br>}</p>
+<p>这种方式可以避免出现外部碎片（文章最后面有外部碎片的介绍），因为同一个 span 是按照固定大小分配和回收的，不会出现不可利用的一小块内存把内存分割掉。这个设计方式与现代操作系统中的伙伴系统有点类似。</p>
+<p> mcache</p>
+<p>mcentral中间的锁会成为系统瓶颈。所以mcentral的前面又增加了一层mcache ，每一个mcache和每一个处理器(P) 对应  也就是说每一个P 都有一个mcache成员 goroutine申请内存的时候 首先从p所有的mcache中间分配 如果mcache中间没有可用的span 再从mcentral中间获取 并且填充到mcache中间 从mcache上分配内存是不需要加锁的 因为同一时间 一个p只有一个协程在上面运行 不可能出现竞争 没有锁的限制 加速了内存分配 </p>
+<p>所以整体的内存分配模型大致如下图所示：</p>
+<p>￼<br><img src="/img/golang/storage9.png"></p>
+<p>其他优化：<br>有一些对象所需要的内存大小是0 如struct{} 这种类型的数据不需要内存 所以不会走上面的逻辑 系统会返回一个固定的地址  0x1180f88</p>
+<p>Tiny对象：就是微小对象<br>上面提到的 sizeclass&#x3D;1 的 span，用来给 &lt;&#x3D; 8B 的对象使用，所以像 int32, byte, bool 以及小字符串等常用的微小对象，都会使用 sizeclass&#x3D;1 的 span，但分配给他们 8B 的空间，大部分是用不上的。并且这些类型使用频率非常高，就会导致出现大量的内部碎片。<br>所以 Go 尽量不使用 sizeclass&#x3D;1 的 span， 而是将 &lt; 16B 的对象为统一视为 tiny 对象(tinysize)。分配时，从 sizeclass&#x3D;2 的 span 中获取一个 16B 的 object 用以分配。如果存储的对象小于 16B，这个空间会被暂时保存起来 (mcache.tiny 字段)，下次分配时会复用这个空间，直到这个 object 用完为止</p>
+<p>￼<img src="/img/golang/storage10.png"></p>
+<p>如果要存储的数据里有指针，即使 &lt;&#x3D; 8B 也不会作为 tiny 对象对待，而是正常使用 sizeclass&#x3D;1 的 span。</p>
+<p>大对象:<br>最大的 sizeclass 最大只能存放 32K 的对象。如果一次性申请超过 32K 的内存，系统会直接绕过 mcache 和 mcentral，直接从 mheap 上获取，mheap 中有一个 freelarge 字段管理着超大 span。</p>
+<p>内存释放:<br>内存释放的过程就是分配的反过程 当mcache存在很多的空闲span的时候就会归还给mcentral mcentral存在很多空闲span就会归还给mheap<br>Mheap再归还给系统 </p>
+<ol>
+<li><p>内存分配主要在用户态完成 不需要频繁进入内核态</p>
+</li>
+<li><p>每个p都有独立的span cache 多个cpu不会并发读写同一块内存 减少cpu L1 cache的cacheline出现dirty的情况 增加cpu cache命中率</p>
+</li>
+<li><p>内存碎片问题 是自己在用户态管理的 在操作系统层是没有碎片的 使得操作系统堆碎片的管理塔里降低</p>
+</li>
+<li><p>Mcache的存在使得内存分配不需要加锁 增加了分配速度 </p>
+</li>
+<li><p>代价就是需要预先申请大块内存</p>
+</li>
+</ol>
+<p>￼<img src="/img/golang/storage11.png"></p>
+<p>将有限的计算机资源布局呈金字塔结构 再将数据从热到冷分为几个层级 放置在金字塔结构上 调度器不断调整 将热数据放在顶层 冷数据放在塔底层 </p>
+<p>这种设计利用了计算的局部性特征，认为冷热数据的交替是缓慢的。所以最怕的就是，数据访问出现冷热骤变。在操作系统上我们称这种现象为内存颠簸，系统架构上通常被说成是缓存穿透。其实都是一个意思，就是过度的使用了金字塔低端的资源。</p>
+<p>内存碎片：<br>内存碎片是系统在内存管理过程中，会不可避免的出现一块块无法被使用的内存空间，这是内存管理的产物。</p>
+<p>内部碎片：<br>一般都是因为字节对齐，如上面介绍 Tiny 对象分配的部分；为了字节对齐，会导致一部分内存空间直接被放弃掉，不做分配使用。<br>再比如申请 28B 大小的内存空间，系统会分配 32B 的空间给它，这也导致了其中 4B 空间是被浪费掉的。这就是内部碎片</p>
+<p>外部碎片：<br>一般是因为内存的不断分配释放，导致一些释放的小内存块分散在内存各处，无法被用以分配。</p>
+<p>￼<br><img src="/img/golang/storage12.png"></p>
+<p>源代码调用流程图：<br>￼<br><img src="/img/golang/storage13.png"></p>
+<p>runtime.MemStats 部分注释</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line">type MemStats struct &#123;</span><br><span class="line">        // heap 分配出去的字节总数，和 HeapAlloc 值相同</span><br><span class="line">        Alloc uint64</span><br><span class="line"></span><br><span class="line">        // TotalAlloc 是 heap 累计分配出去字节数，每次分配</span><br><span class="line">        // 都会累加这个值，但是释放时候不会减少</span><br><span class="line">        TotalAlloc uint64</span><br><span class="line"></span><br><span class="line">        // Sys 是指程序从 OS 那里一共申请了多少内存</span><br><span class="line">        // 因为除了 heap，程序栈及其他内部结构都使用着从 OS 申请过来的内存</span><br><span class="line">        Sys uint64</span><br><span class="line"></span><br><span class="line">        // Mallocs heap 累积分配出去的对象数</span><br><span class="line">        // 活动中的对象总数，即是 Mallocs - Frees</span><br><span class="line">        Mallocs uint64</span><br><span class="line">       </span><br><span class="line">        // Frees 值 heap 累积释放掉的对象总数</span><br><span class="line">        Frees uint64</span><br><span class="line"></span><br><span class="line">        // HeapAlloc 是分配出去的堆对象总和大小，单位字节</span><br><span class="line">        // object 的声明周期是 待分配 -&gt; 分配使用 -&gt; 待回收 -&gt; 待分配</span><br><span class="line">        // 只要不是待分配的状态，都会加到 HeapAlloc 中</span><br><span class="line">        // 它和 HeapInuse 不同，HeapInuse 算的是使用中的 span，</span><br><span class="line">        // 使用中的 span 里面可能还有很多 object 闲置</span><br><span class="line">        HeapAlloc uint64</span><br><span class="line"></span><br><span class="line">        // HeapSys 是 heap 从 OS 那里申请来的堆内存大小，单位字节</span><br><span class="line">        // 指的是虚拟内存的大小，不是物理内存，物理内存大小 Go 语言层面是看不到的。</span><br><span class="line">        // 等于 HeapIdle + HeapInuse</span><br><span class="line">        HeapSys uint64</span><br><span class="line"></span><br><span class="line">        // HeapIdle 表示所有 span 中还有多少内存是没使用的</span><br><span class="line">        // 这些 span 上面没有 object，也就是完全闲置的，可以随时归还给 OS</span><br><span class="line">        // 也可以用于堆栈分配</span><br><span class="line">        HeapIdle uint64</span><br><span class="line"></span><br><span class="line">        // HeapInuse 是处在使用中的所有 span 中的总字节数</span><br><span class="line">        // 只要一个 span 中有至少一个对象，那么就表示它被使用了</span><br><span class="line">        // HeapInuse - HeapAlloc 就表示已经被切割成固定 sizeclass 的 span 里</span><br><span class="line">        HeapInuse uint64</span><br><span class="line"></span><br><span class="line">        // HeapReleased 是返回给操作系统的物理内存总数</span><br><span class="line">        HeapReleased uint64</span><br><span class="line"></span><br><span class="line">        // HeapObjects 是分配出去的对象总数</span><br><span class="line">        // 如同 HeapAlloc 一样，分配时增加，被清理或被释放时减少</span><br><span class="line">        HeapObjects uint64</span><br><span class="line"></span><br><span class="line">        // NextGC is the target heap size of the next GC cycle.</span><br><span class="line">        // NextGC 表示当 HeapAlloc 增长到这个值时，会执行一次 GC</span><br><span class="line">        // 垃圾回收的目标是保持 HeapAlloc ≤ NextGC，每次 GC 结束</span><br><span class="line">        // 下次 GC 的目标，是根据当前可达数据和 GOGC 参数计算得来的</span><br><span class="line">        NextGC uint64</span><br><span class="line"></span><br><span class="line">        // LastGC 是最近一次垃圾回收结束的时间 (the UNIX epoch).</span><br><span class="line">        LastGC uint64</span><br><span class="line"></span><br><span class="line">        // PauseTotalNs 是自程序启动起， GC 造成 STW 暂停的累积纳秒值</span><br><span class="line">        // STW 期间，所有的 goroutine 都会被暂停，只有 GC 的 goroutine 可以运行</span><br><span class="line">        PauseTotalNs uint64</span><br><span class="line"></span><br><span class="line">        // PauseNs 是循环队列，记录着 GC 引起的 STW 总时间</span><br><span class="line">        //</span><br><span class="line">        // 一次 GC 循环，可能会出现多次暂停，这里每项记录的是一次 GC 循环里多次暂停的综合。</span><br><span class="line">        // 最近一次 GC 的数据所在的位置是 PauseNs[NumGC%256]</span><br><span class="line">        PauseNs [256]uint64</span><br><span class="line"></span><br><span class="line">        // PauseEnd 是一个循环队列，记录着最近 256 次 GC 结束的时间戳，单位是纳秒。</span><br><span class="line">        //</span><br><span class="line">        // 它和 PauseNs 的存储方式一样。一次 GC 可能会引发多次暂停，这里只记录一次 GC 最后一次暂停的时间</span><br><span class="line">        PauseEnd [256]uint64</span><br><span class="line"></span><br><span class="line">        // NumGC 指完成 GC 的次数</span><br><span class="line">        NumGC uint32</span><br><span class="line"></span><br><span class="line">        // NumForcedGC 是指应用调用了 runtime.GC() 进行强制 GC 的次数</span><br><span class="line">        NumForcedGC uint32</span><br><span class="line"></span><br><span class="line">        // BySize 统计各个 sizeclass 分配和释放的对象的个数</span><br><span class="line">        //</span><br><span class="line">        // BySize[N] 统计的是对象大小 S，满足 BySize[N-1].Size &lt; S ≤ BySize[N].Size 的对象</span><br><span class="line">        // 这里不记录大于 BySize[60].Size 的对象分配</span><br><span class="line">        BySize [61]struct &#123;</span><br><span class="line">                // Size 表示该 sizeclass 的每个对象的空间大小</span><br><span class="line">                // size class.</span><br><span class="line">                Size uint32</span><br><span class="line"></span><br><span class="line">                // Mallocs 是该 sizeclass 分配出去的对象的累积总数</span><br><span class="line">                // Size * Mallocs 就是累积分配出去的字节总数</span><br><span class="line">                // Mallocs - Frees 就是当前正在使用中的对象总数</span><br><span class="line">                Mallocs uint64</span><br><span class="line"></span><br><span class="line">                // Frees 是该 sizeclass 累积释放对象总数</span><br><span class="line">                Frees uint64</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://zhangming1994.github.io">铁马冰河</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/">http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://zhangming1994.github.io" target="_blank">赵客缦胡缨，吴钩霜雪明</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Golang/">Golang</a></div><div class="post_share"><div class="social-share" data-image="/img/golang/storage6.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/"><img class="next-cover" src="/img/storage1.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Golang内存管理(一)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/" title="Golang内存管理(一)"><img class="cover" src="/img/storage1.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Golang内存管理(一)</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/20083286.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">铁马冰河</div><div class="author-info__description">实践出真知,Pain comes from incompetence</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhangming1994"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/zhangming1994" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我的博客来了</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/" title="Golang内存管理(二)"><img src="/img/golang/storage6.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理(二)"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/" title="Golang内存管理(二)">Golang内存管理(二)</a><time datetime="2023-08-24T03:11:05.000Z" title="发表于 2023-08-24 11:11:05">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/" title="Golang内存管理(一)"><img src="/img/storage1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理(一)"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/" title="Golang内存管理(一)">Golang内存管理(一)</a><time datetime="2023-08-24T02:58:50.000Z" title="发表于 2023-08-24 10:58:50">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/18/%E5%B8%B8%E8%A7%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/" title="常见并发模型"><img src="/img/concurrency1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="常见并发模型"/></a><div class="content"><a class="title" href="/2023/06/18/%E5%B8%B8%E8%A7%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/" title="常见并发模型">常见并发模型</a><time datetime="2023-06-18T06:25:29.000Z" title="发表于 2023-06-18 14:25:29">2023-06-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/17/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%93%B6%E9%A2%88%E5%92%8C%E4%BC%98%E5%8C%96/" title="关系型数据库的瓶颈和优化"><img src="/img/1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="关系型数据库的瓶颈和优化"/></a><div class="content"><a class="title" href="/2023/06/17/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%93%B6%E9%A2%88%E5%92%8C%E4%BC%98%E5%8C%96/" title="关系型数据库的瓶颈和优化">关系型数据库的瓶颈和优化</a><time datetime="2023-06-17T13:28:53.000Z" title="发表于 2023-06-17 21:28:53">2023-06-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/08/17/hello-world/" title="Hello World"><img src="/img/Desktop.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2022/08/17/hello-world/" title="Hello World">Hello World</a><time datetime="2022-08-17T09:23:37.000Z" title="发表于 2022-08-17 17:23:37">2022-08-17</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 铁马冰河</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
