@@ -1,0 +1,180 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Golang内存管理-垃圾回收 | 赵客缦胡缨，吴钩霜雪明</title><meta name="keywords" content="Golang"><meta name="author" content="铁马冰河"><meta name="copyright" content="铁马冰河"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Golang 内存管理（四）：垃圾回收 Golang gc发展进程 1.1 版本: 标记+清除方式，整个过程需要 STW(stop the world，挂起所有用户 goroutine)1.3 版本: 标记过程 STW，清除过程并行1.5 版本: 标记过程使用三色标记法1.8 版本: Hibrid Write Barrier 标记清除 垃圾回收的算法很多，比如最常见的引用计数，节点复制等等。Go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang内存管理-垃圾回收">
+<meta property="og:url" content="http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/index.html">
+<meta property="og:site_name" content="赵客缦胡缨，吴钩霜雪明">
+<meta property="og:description" content="Golang 内存管理（四）：垃圾回收 Golang gc发展进程 1.1 版本: 标记+清除方式，整个过程需要 STW(stop the world，挂起所有用户 goroutine)1.3 版本: 标记过程 STW，清除过程并行1.5 版本: 标记过程使用三色标记法1.8 版本: Hibrid Write Barrier 标记清除 垃圾回收的算法很多，比如最常见的引用计数，节点复制等等。Go">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhangming1994.github.io/img/golang/garbge1.png">
+<meta property="article:published_time" content="2023-08-24T03:23:24.000Z">
+<meta property="article:modified_time" content="2023-08-24T03:27:44.173Z">
+<meta property="article:author" content="铁马冰河">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhangming1994.github.io/img/golang/garbge1.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Golang内存管理-垃圾回收',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-08-24 11:27:44'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="赵客缦胡缨，吴钩霜雪明" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/20083286.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/golang/garbge1.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">赵客缦胡缨，吴钩霜雪明</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Golang内存管理-垃圾回收</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-24T03:23:24.000Z" title="发表于 2023-08-24 11:23:24">2023-08-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-24T03:27:44.173Z" title="更新于 2023-08-24 11:27:44">2023-08-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Golang/">Golang</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Golang内存管理-垃圾回收"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>Golang 内存管理（四）：垃圾回收</p>
+<p>Golang gc发展进程</p>
+<p>1.1 版本: 标记+清除方式，整个过程需要 STW(stop the world，挂起所有用户 goroutine)<br>1.3 版本: 标记过程 STW，清除过程并行<br>1.5 版本: 标记过程使用三色标记法<br>1.8 版本: Hibrid Write Barrier</p>
+<p>标记清除</p>
+<p>垃圾回收的算法很多，比如最常见的引用计数，节点复制等等。Go 采用的是标记清除方式。当 GC 开始时，从 root 开始一层层扫描，这里的 root 区值当前所有 goroutine 的栈和全局数据区的变量(主要是这 2 个地方)。扫描过程中把能被触达的 object 标记出来，那么堆空间未被标记的 object 就是垃圾了；最后遍历堆空间所有 object 对垃圾（未标记）的 object 进行清除，清除完成则表示 GC 完成。清除的 object 会被放回到 mcache 中以备后续分配使用</p>
+<p>Go 的内存mheap区域中有一个 bitmap 区域，就是用来存储 object 标记的 </p>
+<p>最开始 Go 的整个 GC 过程需要 STW，因为用户进程如果在 GC 过程中修改了变量的引用关系，可能会导致清理错误</p>
+<p>并行清除</p>
+<p>这个优化很简单，如上面所述，STW 是为了阻止标记的错误，那么只需对标记过程进行 STW，确保标记正确。清除过程是不需要 STW 的。<br>标记清除算法致命的缺点就在 STW 上，所以 Golang 后期的很多优化都是针对 STW 的，尽可能缩短它的时间，避免出现 Go 服务的卡顿。</p>
+<p>三色标记法<br>为了能让标记过程也能并行，Go 采用了三色标记 + 写屏障的机制。它的步骤大致如下</p>
+<ol>
+<li>GC 开始时，认为所有 object 都是白色，即垃圾。</li>
+<li>从 root 区开始遍历，被触达的 object 置成灰色。</li>
+<li>遍历所有灰色 object，将他们内部的引用变量置成 灰色，自身置成 黑色</li>
+<li>循环第 3 步，直到没有灰色 object 了，只剩下了黑白两种，白色的都是垃圾。</li>
+<li>对于黑色 object，如果在标记期间发生了写操作，写屏障会在真正赋值前将新对象标记为灰色。</li>
+<li>标记过程中，mallocgc 新分配的 object，会先被标记成黑色再返回。</li>
+</ol>
+<p>￼<img src="/img/golang/garbge1.png"></p>
+<p>还有一种情况，标记过程中，堆上的 object 被赋值给了一个栈上指针，导致这个 object 没有被标记到。因为对栈上指针进行写入，写屏障是检测不到的。</p>
+<p>￼￼<img src="/img/golang/garbge2.png"></p>
+<p>为了解决这个问题，标记的最后阶段，还会回头重新扫描一下所有的栈空间，确保没有遗漏。而这个过程就需要启动 STW 了，否则并发场景会使上述场景反复重现</p>
+<p>整个 GC 流程如下图所示：<br>￼<br>￼<img src="/img/golang/garbge3.png"></p>
+<p>正常情况下，写操作就是正常的赋值。<br>GC 开始，开启写屏障等准备工作。开启写屏障等准备工作需要短暂的 STW。<br>Stack scan 阶段，从全局空间和 goroutine 栈空间上收集变量。<br>Mark 阶段，执行上述的三色标记法，直到没有灰色对象。<br>Mark termination 阶段，开启 STW，回头重新扫描 root 区域新变量，对他们进行标记。<br>Sweep 阶段，关闭 STW 和 写屏障，对白色对象进行清除。</p>
+<p>Hibrid Write Barrier：</p>
+<p>三色标记方式，需要在最后重新扫描一下所有全局变量和 goroutine 栈空间，如果系统的 goroutine 很多，这个阶段耗时也会比较长，甚至会长达 100ms。毕竟 Goroutine 很轻量，大型系统中，上百万的 Goroutine 也是常有的事儿。<br>上面说对栈上指针进行写入，写屏障是检测不到，实际上并不是做不到，而是代价非常高，Go 的写屏障故意没去管它，而是采取了再次扫描的方案<br>Go 在 1.8 版本引入了混合写屏障，其会在赋值前，对旧数据置灰，再视情况对新值进行置灰</p>
+<p>￼<br>￼<img src="/img/golang/garbge4.png"></p>
+<p>何时触发 GC</p>
+<ol>
+<li>一般是当 Heap 上的内存达到一定数值后，会触发一次 GC，这个数值我们可以通过环境变量 GOGC 或者 debug.SetGCPercent() 设置，默认是 100，表示当内存增长 100% 执行一次 GC。如果当前堆内存使用了 10MB，那么等到它涨到 20MB 的时候就会触发 GC。</li>
+<li>再就是每隔 2 分钟，如果期间内没有触发 GC，也会强制触发一次。</li>
+<li>最后就是用户手动触发了，也就是调用 runtime.GC() 强制触发一次</li>
+</ol>
+<p>对于 tiny 对象，标记阶段是直接标记成黑色了，没有灰色阶段。因为 tiny 对象是不存放引用类型数据（指针）的，没必要标记成灰色再检查一遍。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://zhangming1994.github.io">铁马冰河</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">http://zhangming1994.github.io/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://zhangming1994.github.io" target="_blank">赵客缦胡缨，吴钩霜雪明</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Golang/">Golang</a></div><div class="post_share"><div class="social-share" data-image="/img/golang/garbge1.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/"><img class="next-cover" src="/img/golang/storage6.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Golang内存管理(二)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/" title="Golang内存管理(一)"><img class="cover" src="/img/storage1.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Golang内存管理(一)</div></div></a></div><div><a href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/" title="Golang内存管理(二)"><img class="cover" src="/img/golang/storage6.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Golang内存管理(二)</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/20083286.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">铁马冰河</div><div class="author-info__description">实践出真知,Pain comes from incompetence</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhangming1994"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/zhangming1994" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我的博客来了</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" title="Golang内存管理-垃圾回收"><img src="/img/golang/garbge1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理-垃圾回收"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" title="Golang内存管理-垃圾回收">Golang内存管理-垃圾回收</a><time datetime="2023-08-24T03:23:24.000Z" title="发表于 2023-08-24 11:23:24">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/" title="Golang内存管理(二)"><img src="/img/golang/storage6.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理(二)"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E4%BA%8C/" title="Golang内存管理(二)">Golang内存管理(二)</a><time datetime="2023-08-24T03:11:05.000Z" title="发表于 2023-08-24 11:11:05">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/" title="Golang内存管理(一)"><img src="/img/storage1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Golang内存管理(一)"/></a><div class="content"><a class="title" href="/2023/08/24/Golang%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86(%E4%B8%80)/" title="Golang内存管理(一)">Golang内存管理(一)</a><time datetime="2023-08-24T02:58:50.000Z" title="发表于 2023-08-24 10:58:50">2023-08-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/18/%E5%B8%B8%E8%A7%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/" title="常见并发模型"><img src="/img/golang/concurrency1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="常见并发模型"/></a><div class="content"><a class="title" href="/2023/06/18/%E5%B8%B8%E8%A7%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/" title="常见并发模型">常见并发模型</a><time datetime="2023-06-18T06:25:29.000Z" title="发表于 2023-06-18 14:25:29">2023-06-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/17/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%93%B6%E9%A2%88%E5%92%8C%E4%BC%98%E5%8C%96/" title="关系型数据库的瓶颈和优化"><img src="/img/golang/1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="关系型数据库的瓶颈和优化"/></a><div class="content"><a class="title" href="/2023/06/17/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%93%B6%E9%A2%88%E5%92%8C%E4%BC%98%E5%8C%96/" title="关系型数据库的瓶颈和优化">关系型数据库的瓶颈和优化</a><time datetime="2023-06-17T13:28:53.000Z" title="发表于 2023-06-17 21:28:53">2023-06-17</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 铁马冰河</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
